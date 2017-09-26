@@ -19,32 +19,34 @@ def cats_to_int(data):
         #     # test[col] = test[col].map(lambda x: cats_list.index(x) )
         # return data #[train, test]
 
+def multiply(fin_z, fin_l):
+    all_df = fin_z
+    for col in fin_l.columns:
+        fin_z_col = fin_z.multiply(fin_l[col], axis="index")
+        all_df = pd.concat([all_df, fin_z_col] , axis=1, join='inner')
+    print ('shape: ' , all_df.shape)
+    all_df.to_csv(output_file)
+    return all_df
+
 zillow_file = 'data/z_reduced.csv'
-language_file = 'data/csvX0.csv'
+language_file = 'data/csvX0_2row.csv'
 zillow_file = 'data/properties_2016.csv'
-# zillow_file_o = 'data/properties_2016_o.csv'
 output_file = 'data/zillow_lang_features3.csv'
 
 
 fin_z = pd.read_csv(zillow_file)
-# fin_z.to_csv(zillow_file_o, sep='\t')
 fin_l = pd.read_csv(language_file)
 
 
 fin_z.set_index('parcelid', inplace=True)
 fin_l.set_index('parcelid', inplace=True)
 
-print (fin_z.shape)
-print (fin_l.shape)
-
 # all_df = pd.concat([fin_z, fin_l], axis=1, join='inner', join_axes=['parcelid'])
 # print ( all_df.shape)
 # all_df = cats_to_int(all_df)
 
 fin_z=cats_to_int(fin_z)
-print ('read')
 fin_l=cats_to_int(fin_l)
-print ('read')
 all_df = pd.concat([fin_z, fin_l], axis=1, join='inner')#, join_axes=['parcelid'])
 print ( all_df.shape)
 
@@ -53,10 +55,10 @@ print fin_z.shape
 fin_l = all_df[fin_l.columns]
 print fin_l.shape
 
+
 #multiplication:
-all_df = fin_z
-for col in fin_l.columns:
-    fin_z_col = fin_z.multiply(fin_l[col], axis="index")
-    all_df = pd.concat([all_df, fin_z_col] , axis=1, join='inner')
-print ('shape: ' , all_df.shape)
-all_df.to_csv(output_file)
+all_df = multiply(fin_z,fin_l)
+
+
+
+
