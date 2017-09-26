@@ -5,6 +5,7 @@ zillow_file = 'data/z_reduced.csv'
 language_file = 'data/csvX0.csv'
 output_file = 'data/zillow_lang_features3.csv'
 
+
 fin_z = open(zillow_file, 'r')
 fin_l = open(language_file, 'r')
 fout_zl = open(output_file, 'w')
