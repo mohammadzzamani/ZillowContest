@@ -1,7 +1,7 @@
 from sklearn import linear_model
 import csv
 import pandas as pd
-
+import numpy as np
 
 
 zillow_file = 'data/z_reduced.csv'
@@ -30,8 +30,9 @@ def multiply(fin_z, fin_l):
     all_df = fin_z
     for col in fin_l.columns:
         fin_z_col = fin_z.multiply(fin_l[col], axis="index")
+        fin_z_col.columns = [ s+'_'+col for s in fin_z.columns]
         all_df = pd.concat([all_df, fin_z_col] , axis=1, join='inner')
-    print ('shape: ' , all_df.shape)
+
     all_df.to_csv(output_file)
     return all_df
 
@@ -67,19 +68,17 @@ fin_z = all_df[fin_z.columns]
 
 fin_z.set_index('parcelid', inplace=True)
 fin_l.set_index('parcelid', inplace=True)
-# print all_df.shape
-# print fin_z.shape
-# print fin_l.shape
-
 
 
 #multiplication:
 all_df = multiply(fin_z,fin_l)
 
 #fill missing values with mean value
-all_df.fillna(all_df.mean())
 
-
+all_df.fillna(all_df.mean(), inplace=True)
+# all_df.fillna(0, inplace=True)
+all_df.dropna(axis=1, how='any', inplace=True)
+# print all_df[:2]
 
 #add transction data and logerror to the final features
 all_df.reset_index(inplace=True)
