@@ -4,8 +4,7 @@ import pandas as pd
 import numpy as np
 
 
-zillow_file = 'data/z_reduced.csv'
-language_file = 'data/csvX0.csv'
+language_file = 'data/csvD_4.5k.csv'
 zillow_file = 'data/properties_2016.csv'
 label_file = 'data/train_2016.csv'
 output_file = 'data/zillow_lang_features3.csv'
@@ -13,7 +12,7 @@ output_file = 'data/zillow_lang_features3.csv'
 def cats_to_int(data):
         # full_train_df.dtypes
         cat_columns = data.select_dtypes(['category','object']).columns
-        print 'cat_columns: ' , cat_columns
+        print ('cat_columns: ' , cat_columns)
         data = data.drop(cat_columns, axis=1)
         return data
         # for col in cat_columns:
@@ -44,6 +43,12 @@ fin_l = pd.read_csv(language_file)
 labels = pd.read_csv(label_file)
 
 
+#min_max_transformation
+fin_l.set_index('parcelid', inplace=True)
+fin_l = (fin_l - fin_l.min())/(fin_l.max()- fin_l.min())
+fin_l.dropna(axis=1, how='any', inplace=True)
+fin_l.reset_index(inplace=True)
+
 #removing those rows in properties that we don't need
 all = pd.merge(labels, fin_z,  how='inner', on='parcelid')
 fin_z = all[fin_z.columns]
@@ -57,8 +62,8 @@ labels = all[labels.columns]
 #now dropping categorical columns
 fin_z=cats_to_int(fin_z)
 fin_l=cats_to_int(fin_l)
-print fin_z.shape
-print fin_l.shape
+print (fin_z.shape)
+print (fin_l.shape)
 
 all_df = pd.merge(fin_l, fin_z, on='parcelid', how='inner')
 
@@ -81,11 +86,19 @@ all_df.dropna(axis=1, how='any', inplace=True)
 # print all_df[:2]
 
 #add transction data and logerror to the final features
+print ('all_df.shape: ' , all_df.shape )
+all_df=pd.concat([all_df, fin_l], axis=1, join='inner')
+print ('all_df.shape: ' , all_df.shape )
 all_df.reset_index(inplace=True)
+#fin_l.reset_index(inplace=True)
 all_df=pd.merge(labels,all_df, how='inner', on='parcelid')
+print ('all_df.shape: ' , all_df.shape )
+#all_df=pd.concat([all_df, fin_l], axis=1, join='inner')
+#print ('all_df.shape: ' , all_df.shape )
+#all_df=pd.merge(all_df, fin_l, how='inner', on='parcelid')
 all_df.set_index(['parcelid', 'transactiondate'], inplace=True)
-print 'all_df.shape: ', all_df.shape
-print 'all_df.columns: ', all_df.columns
+print ('all_df.shape: ', all_df.shape)
+print ('all_df.columns: ', all_df.columns)
 
 
 

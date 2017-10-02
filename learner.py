@@ -28,10 +28,13 @@ def cross_validation(all_df, clf, folds = 10):
         train = all_df.iloc[deselection]
         test = all_df.iloc[selection]
 
+        print ('train.shape: ' , train.shape)
+        #train = train[ abs(train.logerror) < 0.75 ]
+        print ('train.shape: ' , train.shape)
         Xtrain = train.iloc[:,1:]
         Xtest = test.iloc[:,1:]
         Ytrain = train.iloc[:,0]
-        # Ytest = test.iloc[:,0]
+        thisYtest = test.iloc[:,0]
 
         # clf.fit(X=Xtrain,y=Ytrain)
         # Ypred=clf.predict(X=Xtest)
@@ -64,40 +67,44 @@ def cross_validation(all_df, clf, folds = 10):
 
         ESTIMATORS = [
             # ExtraTreesRegressor(n_estimators=10, max_features=32, random_state=0),
-            KNeighborsRegressor(n_neighbors=20),
+            #KNeighborsRegressor(n_neighbors=10),
             RidgeCV(alphas=alphas),
+            #RidgeCV(),
             LassoCV(alphas=alphas),
-            # AdaBoostRegressor(random_state=0)
+            #LassoCV()
+            #AdaBoostRegressor(random_state=0)
             # GradientBoostingRegressor(random_state=0)
         ]
         for estimator in ESTIMATORS:
             estimator.fit(Xtrain, Ytrain)
+            print (estimator.coef_)
             Ypred = estimator.predict(Xtest)
             if Ypreds is None:
                 Ypreds = Ypred
             else:
                 Ypreds = np.vstack((Ypreds, Ypred))
-            print 'shape: ' , Ypreds.shape
-
+            print ('shape: ' , Ypreds.shape)
+            print ('evaluate: ' , evaluate(thisYtest, Ypred) )
+        
         if len(ESTIMATORS)>1:
             Ypreds = np.vstack((Ypreds , np.mean(Ypreds, axis=0)))
-            print Ypreds.shape
+            print (Ypreds.shape)
 
         if YpredsAll is None:
             YpredsAll = Ypreds
         else:
             YpredsAll = np.hstack((YpredsAll, Ypreds))
-        print 'YpredsAll.shape: ' , YpredsAll.shape
+        print ('YpredsAll.shape: ' , YpredsAll.shape)
 
     if len(ESTIMATORS)<1:
         YpredsAll = YpredsAll.reshape(len(YpredsAll),1)
         for ypred in YpredsAll.T:
             ypred = ypred.T
-            print evaluate(Ytest, ypred)
+            print ('final_eval: ' , evaluate(Ytest, ypred))
     else:
         for ypred in YpredsAll:
             ypred = ypred
-            print evaluate(Ytest, ypred)
+            print ('final_eval: ' , evaluate(Ytest, ypred))
 
 
 
@@ -121,8 +128,8 @@ cross_validation(all_df,clf , 10)
 
 X = all_df.ix[:,1:]
 Y = all_df.ix[:,0]
-print X.shape
-print Y.shape
+print (X.shape)
+print (Y.shape)
 
 # clf = RidgeCV(alphas=[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000])
 # clf.fit(X=X,y=Y)
@@ -132,7 +139,7 @@ print Y.shape
 
 lm = Y.mean()
 baseline = [ lm for y in Y ]
-print 'baseline mae:  ', mean_absolute_error(baseline, Y.values)
-print 'baseline mse:  ', mean_squared_error(baseline, Y.values)
+print ('baseline mae:  ', mean_absolute_error(baseline, Y.values))
+print ('baseline mse:  ', mean_squared_error(baseline, Y.values))
 
 
