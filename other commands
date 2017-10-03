@@ -1,0 +1,32 @@
+#ZILLOW
+
+on wwbp-lite:
+    python sample.py
+    mysqldump zillowChallenge final_msgs > final_msgs.sql
+
+on wwbp:
+    scp wwbp-lite:~/zillow/final_msgs.sql data/.
+    mysql mztwitter < data/final_msgs.sql
+    source deactivate
+    python ../scripts/col_to_row.py
+    source activate dlatk
+
+
+./PERMA/dlatkInterface.py -d mztwitter -t final_msgs -c parcelid --deduplicate --clean_messages
+./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid --add_ngrams -n 1 2 3 --combine_feat_tables 1to3gram
+./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid -f  'feat$1to3gram$final_msgs_dedup$parcelid$16to16'  --feat_occ_filter --set_p_occ 0.01 --group_freq_thresh 500
+./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid --add_lex_table -l met_a30_2000_cp --weighted_lexicon
+
+
+./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid -f   'feat$1to3gram$final_msgs_dedup$parcelid$16to16$0_01'   'feat$cat_met_a30_2000_cp_w$final_msgs_dedup$parcelid$16to16'   --group_freq_thresh 500 --outcome_table zillow_train --outcomes logerror    --train_regression   --encoding latin1  --no_unicode   --output_name outputs/zillow_temp.out
+
+
+
+#not needed anymore
+create table all_msgs like losangeles_msgs_2017_08;
+insert into all_msgs select * from losangeles_msgs_2017_08;
+insert ignore into all_msgs select * from losangeles_msgs_2017_09;
+insert ignore into all_msgs select * from orange_msgs_2017_08;
+insert ignore into all_msgs select * from orange_msgs_2017_09;
+insert ignore into all_msgs select * from ventura_msgs_2017_08;
+insert ignore into all_msgs select * from ventura_msgs_2017_09;

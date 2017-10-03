@@ -5,6 +5,7 @@ import numpy as np
 
 
 language_file = 'data/csvD_4.5k.csv'
+# language_file = 'data/LangReduced.csv'
 zillow_file = 'data/properties_2016.csv'
 label_file = 'data/train_2016.csv'
 output_file = 'data/zillow_lang_features3.csv'
@@ -99,6 +100,14 @@ print ('all_df.shape: ' , all_df.shape )
 all_df.set_index(['parcelid', 'transactiondate'], inplace=True)
 print ('all_df.shape: ', all_df.shape)
 print ('all_df.columns: ', all_df.columns)
+
+
+
+# cols = ['logerror']  + [ c for c in fin_z.columns.values]
+# print 'cols: ' , cols
+# all_df = all_df[ [ c for c in cols if c in all_df.columns] ]
+# print ('all_df.columns: ' )
+# print all_df.columns
 
 
 
