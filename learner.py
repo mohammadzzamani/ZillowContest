@@ -1,8 +1,13 @@
 from sklearn.linear_model import Ridge, RidgeCV, LinearRegression, LassoCV, LogisticRegression
-from sklearn.ensemble import ExtraTreesRegressor, AdaBoostRegressor, GradientBoostingRegressor, RandomForestClassifier, VotingClassifier
+from sklearn.ensemble import ExtraTreesRegressor, AdaBoostRegressor, GradientBoostingRegressor, RandomForestClassifier, VotingClassifier, AdaBoostClassifier, BaggingClassifier, GradientBoostingClassifier
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
+# from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+# from sklearn.gaussian_process import GaussianProcessClassifier
+# from sklearn.gaussian_process.kernels import RBF
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 import numpy as np
 import pandas as pd
@@ -30,13 +35,33 @@ class mean_est:
 alphas=[0.0000000001,0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001 , 0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000]
 
 
+def into_classes(data):
+    # print 'data: ' , data
+    if abs(data)<=1:
+        return 0
+    elif data<-1:
+        return -1
+    else: return 1
+
+    # mid = data[abs(data.logerror)<=1]
+    # low = data[data.logerror< -1]
+    # high = data[data.logerror> 1]
+    # print low.shape, ' , ', mid.shape, ' , ', high.shape
+
 def cross_validation_clf(all_df, clf, folds = 10):
 
     fold_sizes = all_df.shape[0]*1.0/folds
     mae_sum = 0
     mse_sum = 0
 
-    Ytest = np.sign(all_df.iloc[:,0])
+    Ytest_original = all_df.iloc[:,0]
+
+    all_df.logerror = all_df.logerror.map(lambda x: into_classes(x))
+    Ytest = all_df.iloc[:,0]
+    # Ytest = np.sign(all_df.iloc[:,0])
+
+    # into_classes(all_df)
+
     YpredsAll = None
     for i in range(0,folds):
         test_start = i* fold_sizes
@@ -49,10 +74,13 @@ def cross_validation_clf(all_df, clf, folds = 10):
 
         print ('train.shape: ' , train.shape)
         print ('test.shape: ' , test.shape)
+
         Xtrain = train.iloc[:,1:]
         Xtest = test.iloc[:,1:]
-        Ytrain = np.sign(train.iloc[:,0])
-        thisYtest = np.sign(test.iloc[:,0])
+        Ytrain = train.iloc[:,0]
+        # Ytrain = np.sign(train.iloc[:,0])
+        thisYtest = test.iloc[:,0]
+        # thisYtest = np.sign(test.iloc[:,0])
 
         # ESTIMATORS = [
         #     ('gnb', GaussianNB()),
@@ -77,34 +105,61 @@ def cross_validation_clf(all_df, clf, folds = 10):
         ESTIMATORS = [
             GaussianNB(),
             DecisionTreeClassifier(random_state=0, max_depth=3),
-            RandomForestClassifier(max_depth=2, random_state=1),
-            RandomForestClassifier(max_depth=3, random_state=2, n_estimators=20, criterion='entropy'),
+            # RandomForestClassifier(max_depth=2, random_state=1),
+            # RandomForestClassifier(max_depth=3, random_state=2, n_estimators=20, criterion='entropy'),
             RandomForestClassifier(max_depth=4, random_state=3, n_estimators=10, criterion='gini'),
-            LogisticRegression(random_state=4),
-            mean_est(type='classification')
+            # RandomForestClassifier(max_depth=2, random_state=4, n_estimators=10, criterion='entropy'),
+            AdaBoostClassifier(),
+            BaggingClassifier(n_estimators=50, max_samples=0.9, max_features=0.9),
+            GradientBoostingClassifier()
+            # QuadraticDiscriminantAnalysis(),
+            # SVC(kernel="linear", C=0.025),
+            # SVC(gamma=2, C=1),
+            # GaussianProcessClassifier(1.0 * RBF(1.0), warm_start=True),
+            # MLPClassifier(alpha=1)
+            # LogisticRegression(random_state=4),
+            # mean_est(type='classification')
         ]
         for estimator in ESTIMATORS:
             estimator.fit(Xtrain, Ytrain)
             Ypred = estimator.predict(Xtest)
             Ypreds = stack_folds_preds(Ypred, Ypreds, 0)
             print ('shape: ' , Ypreds.shape)
-            print ('evaluate: ' , evaluate(np.sign(thisYtest), np.sign(Ypred)) )
+            print ('evaluate: ' )
+            evaluate(thisYtest, Ypred)
+            # print ('evaluate: ' , evaluate(np.sign(thisYtest), np.sign(Ypred)) )
 
         if len(ESTIMATORS)>1:
             print ('.... ', Ypreds.shape)
             Ypreds = np.vstack((Ypreds , np.mean(Ypreds, axis=0)))
 
+
         YpredsAll = stack_folds_preds(Ypreds, YpredsAll, 1)
         print ('YpredsAll.shape: ' , YpredsAll.shape)
 
 
+
+    print 'classes:'
     for ypred in YpredsAll:
         ypred = ypred
         print ('final_eval: ')
-        evaluate(Ytest, np.sign(ypred), type='classification2')
+        evaluate(Ytest, ypred) #, type='classification2')
+        # evaluate(Ytest, np.sign(ypred), type='classification2')
 
+    print 'real_values:'
+    Ytest = Ytest_original
+    for ypred in YpredsAll:
+        ypred = ypred
+        print ('final_eval: ')
+        evaluate(Ytest, ypred)
 
-    # YAll = np.vstack( (np.array(Ytest).reshape(1, len(Ytest)), Ypreds))
+    cols = ['ytrue', 'gnb', 'dtc', 'rfc3',  'ab', 'bc', 'gbc', 'avg']
+    Ytest = all_df.iloc[:,0]
+    print Ytest.shape, ' , ', YpredsAll.shape
+    YAll = np.vstack( (np.array(Ytest).reshape(1, len(Ytest)), YpredsAll))
+    print YAll.shape
+    YAll = pd.DataFrame(data=YAll.T, columns=cols)
+    print 'corr: ' , YAll.corr()
 
 
 def stack_folds_preds(pred_fold, pred_all=None, axis=0):
