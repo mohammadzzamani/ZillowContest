@@ -187,6 +187,8 @@ def cross_validation(all_df, clf, folds = 10):
         selection = [ True if ( i >=test_start and i < test_end) else False for i in range(all_df.shape[0])]
         deselection = [ False if val == True else True for val in selection]
 
+        print ('all_df.shape in cv is: ' , all_df.shape)
+
         train = all_df.iloc[deselection]
         test = all_df.iloc[selection]
 
@@ -239,9 +241,9 @@ def cross_validation(all_df, clf, folds = 10):
             # RidgeCV(),
             # LassoCV(alphas=alphas),
             # GradientBoostingRegressor(loss='lad', random_state=5, n_estimators=200, subsample=0.8 ),
-            GradientBoostingRegressor(loss='lad', random_state=8, n_estimators=50, subsample=0.7 , max_depth=4, max_features=0.8),
-            GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=50, subsample=0.7 , max_depth=4),
-            GradientBoostingRegressor(loss='lad', random_state=6, n_estimators=100, subsample=0.7, max_features=0.8 ),
+            # GradientBoostingRegressor(loss='lad', random_state=8, n_estimators=50, subsample=0.7 , max_depth=4, max_features=0.8),
+            # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=50, subsample=0.7 , max_depth=4),
+            GradientBoostingRegressor(loss='lad', random_state=6, subsample=0.7, max_depth=7, max_features=0.7),
             # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=100, subsample=0.6 ),
             # BaggingRegressor(n_estimators=20, max_samples=0.9, max_features=0.9, random_state=7),
             # mean_est(),
@@ -273,15 +275,15 @@ def cross_validation(all_df, clf, folds = 10):
 
             Ypreds = stack_folds_preds(Ypred, Ypreds, 0)
 
-            print ('shape: ' , Ypreds.shape)
-            print ('evaluate: ')
+            # print ('shape: ' , Ypreds.shape)
+            # print ('evaluate: ')
             evaluate(thisYtest, Ypred, mea=transformation_mean, va=transformation_var)
             # evaluate(np.sign(thisYtest), np.sign(Ypred))
         
         if len(ESTIMATORS)>1:
-            print ('.... ', Ypreds.shape)
+            # print ('.... ', Ypreds.shape)
             Ypreds = np.vstack((Ypreds , np.mean(Ypreds, axis=0)))
-            Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:4], axis=0)))
+            # Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:4], axis=0)))
             # print (Ypreds.shape)
 
         YpredsAll = stack_folds_preds(Ypreds, YpredsAll, 1)
@@ -289,7 +291,7 @@ def cross_validation(all_df, clf, folds = 10):
         #     YpredsAll = Ypreds
         # else:
         #     YpredsAll = np.hstack((YpredsAll, Ypreds))
-        print ('YpredsAll.shape: ' , YpredsAll.shape)
+        # print ('YpredsAll.shape: ' , YpredsAll.shape)
 
     YAll = np.vstack( (np.array(Ytest).reshape(1, len(Ytest)), YpredsAll))
 
@@ -299,25 +301,25 @@ def cross_validation(all_df, clf, folds = 10):
         YpredsAll = YpredsAll.reshape(len(YpredsAll),1)
         for ypred in YpredsAll.T:
             ypred = ypred.T
-            print ('final_eval: ')
+            # print ('final_eval: ')
             # evaluate(np.sign(Ytest), np.sign(ypred), type='classification2')
             evaluate(Ytest, ypred, mea=transformation_mean, va=transformation_var)
     else:
+        print ('final_eval: ')
         for ypred in YpredsAll:
             ypred = ypred
-            print ('final_eval: ')
             # evaluate(np.sign(Ytest), np.sign(ypred), type='classification2')
             evaluate(Ytest, ypred, mea=transformation_mean, va=transformation_var)
-        print 'shapes: ' , YpredsAll.shape
+        # print 'shapes: ' , YpredsAll.shape
         YAll = np.vstack( (np.array(Ytest).reshape(1, len(Ytest)), YpredsAll))
 
         # YAll = np.vstack( (YAll , np.sign(YAll[0] - YAll[1])))
         # YAll = np.vstack( (YAll , np.sign(YAll[0] - YAll[4])))
-        print (' sign eval with knn: ')
-        evaluate(np.sign(YAll[4] - YAll[1]), np.sign(YAll[4] - YAll[0]), type='classification2')
-        print (' sign eval with knn: ')
-        evaluate(np.sign(YAll[5] - YAll[1]), np.sign(YAll[5] - YAll[0]), type='classification2')
-        print ('YAll.shape: .... ', YAll.shape)
+        # print (' sign eval with knn: ')
+        # evaluate(np.sign(YAll[4] - YAll[1]), np.sign(YAll[4] - YAll[0]), type='classification2')
+        # print (' sign eval with knn: ')
+        # evaluate(np.sign(YAll[5] - YAll[1]), np.sign(YAll[5] - YAll[0]), type='classification2')
+        # print ('YAll.shape: .... ', YAll.shape)
 
         YAll = YAll.T
         for i in range(YAll.shape[1]):
@@ -360,12 +362,14 @@ def evaluate(Ytrue, Ypred, type='regression',  mea=None, va=None):
 
 transformation_mean = ef.all_df.logerror.mean()
 transformation_var = ef.all_df.logerror.var()
+print ('all_df.shape in here is: ' , ef.all_df.shape)
 all_df  = (ef.all_df - ef.all_df.mean() ) / ef.all_df.var()
 # all_df.logerror = all_df.logerror* transformation_var  + transformation_mean
 # all_df = (ef.all_df-ef.all_df.min())/(ef.all_df.max()-ef.all_df.min())
 all_df.dropna(axis=1, how='any', inplace=True)
 
 clf = RidgeCV(alphas=[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000])
+print ('all_df.shape in here is: ' , all_df.shape)
 cross_validation(all_df,clf , 10)
 
 # X = ef.all_df[ef.all_df.columns[1:]]
