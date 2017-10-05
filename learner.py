@@ -241,7 +241,7 @@ def cross_validation(all_df, clf, folds = 10):
             # GradientBoostingRegressor(loss='lad', random_state=5, n_estimators=200, subsample=0.8 ),
             GradientBoostingRegressor(loss='lad', random_state=8, n_estimators=50, subsample=0.7 , max_depth=4, max_features=0.8),
             GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=50, subsample=0.7 , max_depth=4),
-            GradientBoostingRegressor(loss='lad', random_state=6, n_estimators=100, subsample=0.7 ),
+            GradientBoostingRegressor(loss='lad', random_state=6, n_estimators=100, subsample=0.7, max_features=0.8 ),
             # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=100, subsample=0.6 ),
             # BaggingRegressor(n_estimators=20, max_samples=0.9, max_features=0.9, random_state=7),
             # mean_est(),
@@ -281,7 +281,7 @@ def cross_validation(all_df, clf, folds = 10):
         if len(ESTIMATORS)>1:
             print ('.... ', Ypreds.shape)
             Ypreds = np.vstack((Ypreds , np.mean(Ypreds, axis=0)))
-            # Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:3], axis=0)))
+            Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:4], axis=0)))
             # print (Ypreds.shape)
 
         YpredsAll = stack_folds_preds(Ypreds, YpredsAll, 1)
