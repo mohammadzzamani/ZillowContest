@@ -243,7 +243,7 @@ def cross_validation(all_df, clf, folds = 10):
             # GradientBoostingRegressor(loss='lad', random_state=5, n_estimators=200, subsample=0.8 ),
             # GradientBoostingRegressor(loss='lad', random_state=8, n_estimators=50, subsample=0.7 , max_depth=4, max_features=0.8),
             # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=50, subsample=0.7 , max_depth=4),
-            GradientBoostingRegressor(loss='lad', random_state=6, subsample=0.7, max_depth=7, max_features=0.7),
+            GradientBoostingRegressor(loss='lad', random_state=6, subsample=0.75, max_depth=6, max_features=0.75, min_impurity_decrease=0.05),
             # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=100, subsample=0.6 ),
             # BaggingRegressor(n_estimators=20, max_samples=0.9, max_features=0.9, random_state=7),
             # mean_est(),

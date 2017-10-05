@@ -68,6 +68,9 @@ all_df.fillna(all_df.mean(), inplace=True)
 all_df.dropna(axis=1, how='any', inplace=True)
 print ('all.shape: ', all_df.shape)
 print ('all.columns: ', all_df.columns)
+all_df.sample(frac=1.0)
+print ('all.shape: ', all_df.shape)
+print ('all.columns: ', all_df.columns)
 #########
 
 '''
