@@ -383,6 +383,7 @@ def learning_for_submisstion(all_df, submission_df):
 
 
     Ypred = estimator.predict(Xtest)
+    Ypred = transform_back(Ypred, transformation_mean, transformation_var)
 
 
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
@@ -391,10 +392,23 @@ def learning_for_submisstion(all_df, submission_df):
     submission_df.reset_index(inplace=True)
     print submission_df.iloc[1:50, :]
     submission_df = submission_df.pivot_table(values='logerror', index='parcelid', columns='transactiondate')
+
+    submission_df.reset_index(inplace=True)
+    
+    submission_df.columns = ['ParcelId' , '201610' , '201710', '201611', '201711', '201612', '201712']
+
+    submission_df = submission_df[['ParcelId' , '201610' ,  '201611','201612', '201710','201711', '201712' ]]
+
+    submission_df.set_index('ParcelId', inplace=True)
+
     print 'final_submission_df.shape: ' , submission_df.shape
     print 'final_submission_df.columns: ' , submission_df.columns
     print submission_df
     final_submission_name = 'data/final_submission.csv'
+
+
+
+
     submission_df.to_csv(final_submission_name)
 
 
@@ -411,7 +425,20 @@ all_df_var = ef.all_df.var()
 print ('all_df.shape in here is: ' , ef.all_df.shape)
 all_df  = (ef.all_df - ef.all_df.mean() ) / ef.all_df.var()
 all_df.dropna(axis=1, how='any', inplace=True)
-submission_df = (ef.submission_df - all_df_mean ) / all_df_var
+print 'shapes..... '
+print all_df_mean.shape
+print all_df_var.shape
+print ef.submission_df.shape
+
+
+for c in ef.submission_df.columns:
+    print 'column: ' , c
+    m = all_df_mean[c]
+    v = all_df_var[c]
+    ef.submission_df[c] = ef.submission_df[c].map(lambda x: (x - m)/v )
+
+submission_df = ef.submission_df
+# submission_df = (ef.submission_df - all_df_mean ) / all_df_var
 print ('columns: ' )
 print (all_df.columns)
 print (submission_df.columns)

@@ -99,13 +99,12 @@ labels = pd.concat([labels_16, labels_17], ignore_index=True)
 
 fin_l = pd.read_csv(language_file)
 # labels = pd.read_csv(label_file)
-submission_df = pd.read_csv(sample_submission)
-
+submission_df = pd.read_csv(revised_sample_submission)
 print ('submission_df.shape: ' , submission_df.shape)
 
 #### need it just for the first run
-prepare_submission_data(fin_z)
-exit()
+# prepare_submission_data(fin_z)
+# exit()
 
 submission_df = pd.merge(submission_df, fin_z, on='parcelid', how='inner')
 print ('submission_df.columns: ', submission_df.columns)
@@ -131,6 +130,7 @@ submission_df.fillna(all_df.mean(), inplace=True)
 all_df.fillna(all_df.mean(), inplace=True)
 
 all_df.dropna(axis=1, how='any', inplace=True)
+submission_df = submission_df[all_df.columns]
 print ('all_df.shape: ', all_df.shape)
 print ('all_df.columns: ', all_df.columns)
 all_df.sample(frac=1.0)
