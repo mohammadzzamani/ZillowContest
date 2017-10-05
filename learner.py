@@ -360,13 +360,74 @@ def evaluate(Ytrue, Ypred, type='regression',  mea=None, va=None):
 
 
 
+def learning_for_submisstion(all_df, submission_df):
+
+    Xtrain = all_df.iloc[:,1:]
+    Xtest = submission_df.iloc[:,1:]
+    Ytrain = all_df.iloc[:,0]
+
+    estimator = GradientBoostingRegressor(loss='lad', random_state=6, subsample=0.75, max_depth=6, max_features=0.75, min_impurity_decrease=0.05)
+
+    estimator.fit(Xtrain, Ytrain)
+
+    # training error
+    train_pred = estimator.predict(Xtrain)
+    print ('train evaluation:')
+    evaluate(Ytrain, train_pred, mea=transformation_mean, va=transformation_var)
+
+    # training error of baseline
+    lm = train_pred.mean()
+    baseline = [ lm for y in train_pred ]
+    print ('baseline mae:  ')
+    evaluate(np.array(baseline), train_pred, mea=transformation_mean, va=transformation_var)
+
+
+    Ypred = estimator.predict(Xtest)
+
+
+    ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
+    submission_df['logerror'] = Ypred
+    submission_df = submission_df[['logerror']]
+    submission_df.reset_index(inplace=True)
+    print submission_df.iloc[1:50, :]
+    submission_df = submission_df.pivot_table(values='logerror', index='parcelid', columns='transactiondate')
+    print 'final_submission_df.shape: ' , submission_df.shape
+    print 'final_submission_df.columns: ' , submission_df.columns
+    print submission_df
+    final_submission_name = 'data/final_submission.csv'
+    submission_df.to_csv(final_submission_name)
+
+
+    return submission_df
+
+
+
+
+#normalizing data
 transformation_mean = ef.all_df.logerror.mean()
 transformation_var = ef.all_df.logerror.var()
+all_df_mean = ef.all_df.mean()
+all_df_var = ef.all_df.var()
 print ('all_df.shape in here is: ' , ef.all_df.shape)
 all_df  = (ef.all_df - ef.all_df.mean() ) / ef.all_df.var()
+all_df.dropna(axis=1, how='any', inplace=True)
+submission_df = (ef.submission_df - all_df_mean ) / all_df_var
+print ('columns: ' )
+print (all_df.columns)
+print (submission_df.columns)
+submission_df = submission_df[all_df.columns]
+print (submission_df.columns)
+
+null_df  = pd.isnull(submission_df).sum() > 0
+print 'null_df: '
+print null_df
+
+learning_for_submisstion(all_df, submission_df)
+
+
 # all_df.logerror = all_df.logerror* transformation_var  + transformation_mean
 # all_df = (ef.all_df-ef.all_df.min())/(ef.all_df.max()-ef.all_df.min())
-all_df.dropna(axis=1, how='any', inplace=True)
+
 
 clf = RidgeCV(alphas=[0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000])
 print ('all_df.shape in here is: ' , all_df.shape)
