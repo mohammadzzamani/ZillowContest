@@ -1,5 +1,5 @@
 from sklearn.linear_model import Ridge, RidgeCV, LinearRegression, LassoCV, LogisticRegression
-from sklearn.ensemble import ExtraTreesRegressor, AdaBoostRegressor, GradientBoostingRegressor, RandomForestClassifier, VotingClassifier, AdaBoostClassifier, BaggingClassifier, GradientBoostingClassifier
+from sklearn.ensemble import ExtraTreesRegressor, AdaBoostRegressor, GradientBoostingRegressor, RandomForestClassifier, VotingClassifier, AdaBoostClassifier, BaggingClassifier, GradientBoostingClassifier, BaggingRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
@@ -234,14 +234,22 @@ def cross_validation(all_df, clf, folds = 10):
             # KNeighborsRegressor(n_neighbors=5),
             # KNeighborsRegressor(n_neighbors=10),
             # KNeighborsRegressor(n_neighbors=5),
-            RidgeCV(alphas=alphas),
+            mean_est(),
+            # RidgeCV(alphas=alphas),
             # RidgeCV(),
-            LassoCV(alphas=alphas),
-            mean_est(),
-            mean_est(),
-            mean_est(),
-            mean_est(),
-            mean_est()
+            # LassoCV(alphas=alphas),
+            # GradientBoostingRegressor(loss='lad', random_state=5, n_estimators=200, subsample=0.8 ),
+            GradientBoostingRegressor(loss='lad', random_state=8, n_estimators=50, subsample=0.7 , max_depth=4, max_features=0.8),
+            GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=50, subsample=0.7 , max_depth=4),
+            GradientBoostingRegressor(loss='lad', random_state=6, n_estimators=100, subsample=0.7 ),
+            # GradientBoostingRegressor(loss='lad', random_state=7, n_estimators=100, subsample=0.6 ),
+            # BaggingRegressor(n_estimators=20, max_samples=0.9, max_features=0.9, random_state=7),
+            # mean_est(),
+            # mean_est(),
+            # mean_est()
+            # mean_est()
+            # mean_est()
+            # mean_est()
 
             #LassoCV()
             #AdaBoostRegressor(random_state=0)
@@ -267,7 +275,8 @@ def cross_validation(all_df, clf, folds = 10):
 
             print ('shape: ' , Ypreds.shape)
             print ('evaluate: ')
-            evaluate(np.sign(thisYtest), np.sign(Ypred))
+            evaluate(thisYtest, Ypred, mea=transformation_mean, va=transformation_var)
+            # evaluate(np.sign(thisYtest), np.sign(Ypred))
         
         if len(ESTIMATORS)>1:
             print ('.... ', Ypreds.shape)
@@ -292,13 +301,13 @@ def cross_validation(all_df, clf, folds = 10):
             ypred = ypred.T
             print ('final_eval: ')
             # evaluate(np.sign(Ytest), np.sign(ypred), type='classification2')
-            evaluate(Ytest, ypred)
+            evaluate(Ytest, ypred, mea=transformation_mean, va=transformation_var)
     else:
         for ypred in YpredsAll:
             ypred = ypred
             print ('final_eval: ')
             # evaluate(np.sign(Ytest), np.sign(ypred), type='classification2')
-            evaluate(Ytest, ypred)
+            evaluate(Ytest, ypred, mea=transformation_mean, va=transformation_var)
         print 'shapes: ' , YpredsAll.shape
         YAll = np.vstack( (np.array(Ytest).reshape(1, len(Ytest)), YpredsAll))
 
@@ -311,7 +320,10 @@ def cross_validation(all_df, clf, folds = 10):
         print ('YAll.shape: .... ', YAll.shape)
 
         YAll = YAll.T
-        print YAll
+        for i in range(YAll.shape[1]):
+            print ' <<<<<< ', i , ' >>>>>>'
+            print YAll[:,i]
+
         YAll_abs = abs(YAll)
         all_mean = np.mean(YAll_abs,axis=0)
         print ('all_mean:')
@@ -322,7 +334,20 @@ def cross_validation(all_df, clf, folds = 10):
     # print 'mae_sum: ' , mae_sum
     # print 'mse_sum: ' , mse_sum
 
-def evaluate(Ytrue, Ypred, type='regression'):
+def transform_back(values, m, v):
+
+    #print 'v: ', type(v), ' , ', type(m) , ' , ', type(values)
+    # print 'm: ', m
+    #print values.shape
+    #print m.shape
+    values = (values*v ) + m
+    return values
+
+def evaluate(Ytrue, Ypred, type='regression',  mea=None, va=None):
+    if not mea is None:
+        Ytrue = transform_back(Ytrue, mea, va)
+        Ypred = transform_back(Ypred, mea, va)
+
     mae = mean_absolute_error(Ytrue,Ypred)
     mse = mean_squared_error(Ytrue,Ypred)
     if type is 'regression':
@@ -332,7 +357,11 @@ def evaluate(Ytrue, Ypred, type='regression'):
     return [mae , mse]
 
 
+
+transformation_mean = ef.all_df.logerror.mean()
+transformation_var = ef.all_df.logerror.var()
 all_df  = (ef.all_df - ef.all_df.mean() ) / ef.all_df.var()
+# all_df.logerror = all_df.logerror* transformation_var  + transformation_mean
 # all_df = (ef.all_df-ef.all_df.min())/(ef.all_df.max()-ef.all_df.min())
 all_df.dropna(axis=1, how='any', inplace=True)
 
@@ -355,7 +384,9 @@ print (Y.shape)
 
 lm = Y.mean()
 baseline = [ lm for y in Y ]
-print ('baseline mae:  ', mean_absolute_error(baseline, Y.values))
-print ('baseline mse:  ', mean_squared_error(baseline, Y.values))
+print ('baseline mae:  ')
+evaluate(np.array(baseline), Y.values, mea=transformation_mean, va=transformation_var)
+# mean_absolute_error(baseline, Y.values))
+# print ('baseline mse:  ', mean_squared_error(baseline, Y.values))
 
 
