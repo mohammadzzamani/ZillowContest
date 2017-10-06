@@ -18,7 +18,7 @@ def connectMysqlDB(self):
         return c
 
 
-def extract(self):
+def extract():
         try:
                 cursor = connectMysqlDB()
         except:
