@@ -12,7 +12,7 @@ host = 'localhost'
 table = 'final_msgs_dedup'
 filename = 'zillow_messages.tsv'
 
-def connectMysqlDB(self):
+def connectMysqlDB():
         conn = MySQLdb.connect(host, user, password, database)
         c = conn.cursor()
         return c
