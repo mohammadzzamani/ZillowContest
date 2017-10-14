@@ -128,36 +128,36 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
     num_labels = 1
 
 
-    w0 = tf.Variable(tf.truncated_normal([num_features, 200], mean=0.0, stddev=0.1, dtype=tf.float64))
+    w0 = tf.Variable(tf.truncated_normal([num_features, 200], mean=0.0, stddev=0.1, dtype=tf.float32))
     # w0 = tf.Variable(tf.random_uniform([num_features, 50], -1, 1))
-    w1 = tf.Variable(tf.truncated_normal([200, 50], mean=0.0, stddev=0.1, dtype=tf.float64))
-    w2 = tf.Variable(tf.truncated_normal([50, 25], mean=0.0, stddev=0.1, dtype=tf.float64))
+    w1 = tf.Variable(tf.truncated_normal([200, 50], mean=0.0, stddev=0.1, dtype=tf.float32))
+    w2 = tf.Variable(tf.truncated_normal([50, 25], mean=0.0, stddev=0.1, dtype=tf.float32))
     # w1 = tf.Variable(tf.random_uniform([50,10], -1, 1))
-    w3 = tf.Variable(tf.truncated_normal([25, 10], mean=0.0, stddev=0.1, dtype=tf.float64))
-    w4 = tf.Variable(tf.truncated_normal([10, 1], mean=0.0, stddev=0.1, dtype=tf.float64))
+    w3 = tf.Variable(tf.truncated_normal([25, 10], mean=0.0, stddev=0.1, dtype=tf.float32))
+    w4 = tf.Variable(tf.truncated_normal([10, 1], mean=0.0, stddev=0.1, dtype=tf.float32))
     # w2 = tf.Variable(tf.random_uniform([10,1], -1, 1))
-    # w2 = tf.Variable(tf.truncated_normal([10, 1], mean=0.0, stddev=1.0, dtype=tf.float64))
-    # b0 = tf.constant(1, shape=[1],dtype = tf.float64)
-    b0 = tf.Variable(tf.ones(1, dtype = tf.float64))
-    b1 = tf.Variable(tf.ones(1, dtype = tf.float64))
-    b2 = tf.Variable(tf.ones(1, dtype = tf.float64))
-    b3 = tf.Variable(tf.ones(1, dtype = tf.float64))
-    b4 = tf.Variable(tf.ones(1, dtype = tf.float64))
+    # w2 = tf.Variable(tf.truncated_normal([10, 1], mean=0.0, stddev=1.0, dtype=tf.float32))
+    # b0 = tf.constant(1, shape=[1],dtype = tf.float32)
+    b0 = tf.Variable(tf.ones(1, dtype = tf.float32))
+    b1 = tf.Variable(tf.ones(1, dtype = tf.float32))
+    b2 = tf.Variable(tf.ones(1, dtype = tf.float32))
+    b3 = tf.Variable(tf.ones(1, dtype = tf.float32))
+    b4 = tf.Variable(tf.ones(1, dtype = tf.float32))
 
-    # const = tf.Variable(tf.ones(1, dtype = tf.float64))
-    const = tf.constant(100, dtype=tf.float64)
-
-
-    # w0=tf.Variable(tf.random_uniform([num_features,50],-0.01,0.01,dtype = tf.float64))
-    # b0=tf.Variable(tf.random_uniform([50,1],-0.01,0.01, dtype = tf.float64))
-    # w1=tf.Variable(tf.random_uniform([50,1],-0.01,0.01, dtype = tf.float64))
+    # const = tf.Variable(tf.ones(1, dtype = tf.float32))
+    const = tf.constant(100, dtype=tf.float32)
 
 
-    tf_train_dataset = tf.placeholder(tf.float64, shape = [None, num_features])
-    # tf_train_labels = tf.placeholder(tf.float64, shape = [None])
-    tf_train_labels = tf.placeholder(tf.float64,[None,1])
+    # w0=tf.Variable(tf.random_uniform([num_features,50],-0.01,0.01,dtype = tf.float32))
+    # b0=tf.Variable(tf.random_uniform([50,1],-0.01,0.01, dtype = tf.float32))
+    # w1=tf.Variable(tf.random_uniform([50,1],-0.01,0.01, dtype = tf.float32))
 
-    # step =  tf.Variable(tf.zeros((), dtype = tf.int64))
+
+    tf_train_dataset = tf.placeholder(tf.float32, shape = [None, num_features])
+    # tf_train_labels = tf.placeholder(tf.float32, shape = [None])
+    tf_train_labels = tf.placeholder(tf.float32,[None,1])
+
+    # step =  tf.Variable(tf.zeros((), dtype = tf.int32))
 
 
     y, cost = calc(train_features, train_prices, w0, w1, w2, w3, w4, b0, b1, b2, b3, b4, const)
