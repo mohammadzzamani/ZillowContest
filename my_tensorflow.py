@@ -108,7 +108,7 @@ def calc(x, y, w0, w1, w2, w3, w4, b0,b1,b2, b3, b4, const):
 
     return [ predictions, error ]
 
-def run_(train_features, train_prices, test_features, test_prices, num_steps=40, batch_size= 10 ):
+def run_(train_features, train_prices, test_features, test_prices, num_steps=4000, batch_size= 100 ):
     print ('run_')
 
     print ('max, min: ' , np.max(test_prices), ' , ', np.min(test_prices))
