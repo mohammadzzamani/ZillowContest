@@ -236,10 +236,10 @@ def cross_validation(all_df, clf, folds = 10):
         print ('cntr = 0 ')
         print (Xtrain.shape)
         print (Xtest.shape)
-
-        print ('cntr = 1 ')
-        print (orig_Xtrain.shape)
-        print (orig_Xtest.shape)
+        #
+        # print ('cntr = 1 ')
+        # print (orig_Xtrain.shape)
+        # print (orig_Xtest.shape)
 
 
         # clf.fit(X=Xtrain,y=Ytrain)
@@ -326,7 +326,7 @@ def cross_validation(all_df, clf, folds = 10):
         # print (thisYtest)
         # print ('ypred_tf:')
         # print (ypred_tf)
-        evaluate(thisYtest, np.array(ypred_tf), mea=transformation_mean, va=transformation_var)
+        evaluate(thisYtest, np.array(ypred_tf), '\n' + str(i) + ' ,  deep learning' , mea=transformation_mean, va=transformation_var)
 
         for estimator in ESTIMATORS:
             # if check < 0:
@@ -498,17 +498,20 @@ def transform_back(values, m, v):
     values = (values*v ) + m
     return values
 
-def evaluate(Ytrue, Ypred, type='regression',  mea=None, va=None):
+def evaluate(Ytrue, Ypred, type='regression',  pre = 'pre ', mea=None, va=None):
     if not mea is None:
         Ytrue = transform_back(Ytrue, mea, va)
         Ypred = transform_back(Ypred, mea, va)
 
     mae = mean_absolute_error(Ytrue,Ypred)
     mse = mean_squared_error(Ytrue,Ypred)
-    if type is 'regression':
-        print ('mae: ' , mae, ' , mse: ', mse)
-    elif type is 'classification2':
-        print ('accuracy: ' , (2-mae)/2)
+    with open("res.txt", "a") as myfile:
+
+        if type is 'regression':
+            myfile.write(pre + 'mae: ' + str(mae)+ ' , mse: ' + str(mse) + ' \n' )
+            print ('mae: ' , mae, ' , mse: ', mse)
+        elif type is 'classification2':
+            print ('accuracy: ' , (2-mae)/2)
     return [mae , mse]
 
 def prepare_final_submission(submission_df, Ypred):

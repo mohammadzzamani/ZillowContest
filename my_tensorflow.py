@@ -108,7 +108,7 @@ def calc(x, y, w0, w1, w2, w3, w4, b0,b1,b2, b3, b4, const):
 
     return [ predictions, error ]
 
-def run_(train_features, train_prices, test_features, test_prices, num_steps=4000, batch_size= 100 ):
+def run_(train_features, train_prices, test_features, test_prices, num_steps=40, batch_size= 10 ):
     print ('run_')
 
     print ('max, min: ' , np.max(test_prices), ' , ', np.min(test_prices))
@@ -157,7 +157,7 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
     # tf_train_labels = tf.placeholder(tf.float64, shape = [None])
     tf_train_labels = tf.placeholder(tf.float64,[None,1])
 
-    step =  tf.Variable(tf.zeros((), dtype = tf.int64))
+    # step =  tf.Variable(tf.zeros((), dtype = tf.int64))
 
 
     y, cost = calc(train_features, train_prices, w0, w1, w2, w3, w4, b0, b1, b2, b3, b4, const)
@@ -207,7 +207,7 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
 
             if i % 10 == 0:
                 # optimizer.__setattr__('learning_rate', learning_rate * 0.99)
-                print('i: ' , i , ' , ', sess.run(cost))
+                # print('i: ' , i , ' , ', sess.run(cost))
                 # y_pred , test_cost = calc(test_features, test_prices, w0, w1, w2, b0, b1, b2,const)
                 # print ('preds: ' , sess.run(y_pred))
                 optimizer.__setattr__('learning_rate', learning_rate)
@@ -216,7 +216,7 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
                 predictions = sess.run(y_pred)
 
                 # print ('test_y: ' , test_prices)
-                print('preds: ' , predictions[:20])
+                print('preds: ' , predictions[:5])
 
                 tcost = sess.run(train_cost)
                 print(tcost)
@@ -238,8 +238,8 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
 
 
         predictions = sess.run(y_pred)
-        print ('test_y: ' , test_prices[:20])
-        print('preds: ' , predictions[:20])
+        print ('test_y: ' , test_prices[:5])
+        print('preds: ' , predictions[:5])
 
         print('test cost: ' , sess.run(cost))
 
@@ -249,12 +249,12 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
         print (tf.metrics.mean_squared_error(test_prices, predictions))
 
 
-        fig, ax = plt.subplots()
-        ax.scatter(test_prices, predictions)
-        ax.plot([test_prices.min(), test_prices.max()], [test_prices.min(), test_prices.max()], 'k--', lw=3)
-        ax.set_xlabel('Measured')
-        ax.set_ylabel('Predicted')
-        plt.show()
+        # fig, ax = plt.subplots()
+        # ax.scatter(test_prices, predictions)
+        # ax.plot([test_prices.min(), test_prices.max()], [test_prices.min(), test_prices.max()], 'k--', lw=3)
+        # ax.set_xlabel('Measured')
+        # ax.set_ylabel('Predicted')
+        # plt.show()
 
         return predictions
 
