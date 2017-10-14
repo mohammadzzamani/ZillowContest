@@ -12,12 +12,21 @@ on wwbp:
     source activate dlatk
 
 
-./PERMA/dlatkInterface.py -d mztwitter -t final_msgs -c parcelid --deduplicate --clean_messages
-./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid --add_ngrams -n 1 2 3 --combine_feat_tables 1to3gram
-./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid -f  'feat$1to3gram$final_msgs_dedup$parcelid$16to16'  --feat_occ_filter --set_p_occ 0.01 --group_freq_thresh 500
+%% ./PERMA/dlatkInterface.py -d mztwitter -t final_msgs -c message_id --deduplicate --clean_messages
+./dlatkInterface.py -d mztwitter -t final_msgs_8to10 -c message_id --add_ngrams -n 1 2 3 --combine_feat_tables 1to3gram
+
+./dlatkInterface.py -d mztwitter -t final_msgs_8to10 -c message_id -f  'feat$1to3gram$final_msgs_8to10$message_id$16to16'  --feat_occ_filter --set_p_occ 0.01 --group_freq_thresh 1
+
+./dlatkInterface.py -d mztwitter -t final_msgs_8to10 -c message_id -f 'feat$1to3gram$final_msgs_8to10$message_id$16to16$0_01' --fit_reducer --model rpca --reducer_to_lexicon msg_8to10_rpca
+
+./dlatkInterface.py -d mztwitter -t final_msgs_8to10 -c message_id -add_lex_table -l <lex_table>  --weighted_lex
+
+./dlatkInterface.py -d zillow -t final_msgs_8to10 -c message_id -f 'feat$1to3gram$final_msgs_8to10$message_id$16to16$0_01' --fit_reducer --model rpca --reducer_to_lexicon msg_8to10_rpca
+
+
+
+
 ./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid --add_lex_table -l met_a30_2000_cp --weighted_lexicon
-
-
 ./PERMA/dlatkInterface.py -d mztwitter -t final_msgs_dedup -c parcelid -f   'feat$1to3gram$final_msgs_dedup$parcelid$16to16$0_01'   'feat$cat_met_a30_2000_cp_w$final_msgs_dedup$parcelid$16to16'   --group_freq_thresh 500 --outcome_table zillow_train --outcomes logerror    --train_regression   --encoding latin1  --no_unicode   --output_name outputs/zillow_temp.out
 
 
