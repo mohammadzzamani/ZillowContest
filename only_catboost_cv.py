@@ -129,6 +129,26 @@ ESTIMATORS = [
             # CatBoostRegressor(iterations=400, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9),
         ]
 
+
+ESTIMATORS = [
+            mean_est(),
+            # GradientBoostingRegressor(n_estimators= 150, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.05, learning_rate=0.01),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.02),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.02),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
+            GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
+            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=4, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
+            CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.8),
+            CatBoostRegressor(iterations=500, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
+            CatBoostRegressor(iterations=500, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
+            CatBoostRegressor(iterations=550, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8, rsm=0.85),
+            CatBoostRegressor(iterations=600, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.85),
+            # CatBoostRegressor(iterations=530, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6),
+            # CatBoostRegressor(iterations=600, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7),
+            # CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
+            # CatBoostRegressor(iterations=400, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9),
+        ]
+
 for train_df in [train2016, train2017]:
     print('Remove missing data fields ...')
 
