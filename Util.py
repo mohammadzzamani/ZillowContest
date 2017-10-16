@@ -119,3 +119,12 @@ def cats_to_int(data):
             data[col] = pd.Categorical(data[col])
             data[col] = data[col].astype('category').cat.codes
         return data
+
+
+def add_date_features(df):
+    df["transaction_year"] = df["transactiondate"].dt.year
+    df["transaction_month"] = (df["transactiondate"].dt.year - 2016)*12 + df["transactiondate"].dt.month
+    df["transaction_day"] = df["transactiondate"].dt.day
+    df["transaction_quarter"] = (df["transactiondate"].dt.year - 2016)*4 +df["transactiondate"].dt.quarter
+    df.drop(["transactiondate"], inplace=True, axis=1)
+    return df
