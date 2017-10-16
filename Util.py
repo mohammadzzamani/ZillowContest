@@ -176,38 +176,41 @@ def get_submission_format(data):
     print (submission_df.shape)
     return submission_df
 
-def prepare_final_submission(submission_df, Ypred, type= 0, output_filename='data/final_submission_outlierDetection.csv'):
+def prepare_final_submission(submission_df, Ypred, type=0, output_filename='data/final_submission_outlierDetection.csv'):
     print ('prepare_final_submission ...')
-    # print ('submission_df.columns: ' , submission_df.columns)
+    print ('submission_df.columns: ' , submission_df.columns, ' , ', submission_df.shape)
+
+    print ('Ypred: ', Ypred)
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
     submission_df['logerror'] = Ypred
+
     submission_df = submission_df[['logerror']]
 
     print ('submission_df.columns: ' , submission_df.columns)
 
     # if ('Date' in submission_df.columns):
-    if type == 0:
-        submission_df.reset_index(inplace=True)
-        print (submission_df.iloc[1:50, :])
+    # if type == 0:
+    submission_df.reset_index(inplace=True)
+    print (submission_df)
 
 
-        submission_df = submission_df.pivot_table(values='logerror', index='ParcelId', columns='transactiondate')
+    submission_df = submission_df.pivot_table(values='logerror', index='ParcelId', columns='transactiondate')
 
-        submission_df.reset_index(inplace=True)
+    submission_df.reset_index(inplace=True)
 
-        submission_df.columns = ['ParcelId' , '201610' , '201710', '201611', '201711', '201612', '201712']
+    submission_df.columns = ['ParcelId' , '201610' , '201710', '201611', '201711', '201612', '201712']
 
-        submission_df = submission_df[['ParcelId' , '201610' ,  '201611', '201612', '201710','201711', '201712' ]]
+    submission_df = submission_df[['ParcelId' , '201610' ,  '201611', '201612', '201710','201711', '201712' ]]
 
-        submission_df.set_index('ParcelId', inplace=True)
+    submission_df.set_index('ParcelId', inplace=True)
 
 
-    else:
-        cols = ['201610' , '201611', '201612', '201710', '201711', '201712']
-        for i in range(len(cols)):
-            c = cols[i]
-            submission_df[c] = submission_df['logerror']
-        submission_df = submission_df[cols]
+    # else:
+    #     cols = ['201610' , '201611', '201612', '201710', '201711', '201712']
+    #     for i in range(len(cols)):
+    #         c = cols[i]
+    #         submission_df[c] = submission_df['logerror']
+    #     submission_df = submission_df[cols]
 
 
     print ('final_submission_df.shape: ' , submission_df.shape)
