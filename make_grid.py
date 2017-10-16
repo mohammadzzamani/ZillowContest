@@ -180,10 +180,13 @@ for i in range(1,grid_size):
                 df = pd.concat((df, res))
             # print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
 
+        if i%30== 0 and j%30 == 0:
+            print (i , ' , ' , j, ' , ', res)
+
 
 print ('df: ' , df.shape, ' , ' , df.columns)
-df.set_index('rcid', inplace=True)
-print ('df: ' , df.shape, ' , ' , df.columns)
+# df.set_index('rcid', inplace=True)
+print ('df: ' , df)
 
 
 houses_df['rcid'] = None
