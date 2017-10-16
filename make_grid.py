@@ -141,10 +141,10 @@ msgs_features_df['row_col'] = msgs_features_df['row'].astype(str)+ '_' + msgs_fe
 mf_df = msgs_features_df.groupby(['row', 'col']).sum()
 mf_df = mf_df.div(mf_df.one, axis='index')
 
-mf_df['row_col'] = str(mf_df['row'])+ '_' + str(mf_df['col'])
-
 print ('msgs_features_df.shape: ', mf_df.shape , ' , ', mf_df.columns)
 print ('msgs_features_df: ', mf_df)
+
+mf_df = mf_df.drop('message_id', 1)
 
 print (mf_df)
 
@@ -169,13 +169,16 @@ for i in range(1,grid_size):
         res = msgs_features_df.loc[msgs_features_df['row_col'].isin(ids)]
         res['rcid'] = str(i)+'_'+str(j)
         res = res.groupby(['rcid']).sum()
+        temp_one = res['one']
         res = res.div(res.one, axis='index')
+        res['one'] = temp_one
 
-        if df is None:
-            df =res
-        else:
-            df = pd.concat(df, res)
-        print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
+        if res.shape[0] > 0:
+            if df is None:
+                df =res
+            else:
+                df = pd.concat(df, res)
+            print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
 
 
 
