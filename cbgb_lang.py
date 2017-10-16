@@ -61,9 +61,17 @@ train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
 # print('Tax Features 2017  ...')
 # train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
 
+language = language.rename(columns = {'parcelid': 'ParcelId'})
+
 print('Concat Train 2016 & 2017 ...')
 train_df = pd.concat([train2016, train2017], axis = 0)
+
+
+print ('merging sample submission with properties')
 test_df = pd.merge(sample_submission[['ParcelId']], properties2017.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
+
+print ('merging test_df with lang')
+test_df = pd.merge(test_df, language, how = 'left', on = 'ParcelId')
 
 del  properties2017, train2016, train2017, properties2016
 gc.collect();
