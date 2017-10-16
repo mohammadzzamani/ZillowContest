@@ -131,12 +131,16 @@ msgs_features_df['row'] = msgs_features_df.latitude.map(calc_row_number)
 
 # longitude_func = partial(calc_row_col_number(), lat_long = 'longitude')
 msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
+msgs_features_df['one'] = 1
+
 
 print ('grouping on row and col')
-mf_df = msgs_features_df.groupby(['row', 'col']).mean()
+mf_df = msgs_features_df.groupby(['row', 'col']).sum()
+mf_df = mf_df = mf_df.div(mf_df.one, axis='index')
+
 mf_df['row_col'] = str(mf_df['row'])+ '_' + str(mf_df['col'])
 
-print ('msgs_features_df.shape: ', mf_df.shape)
+print ('msgs_features_df.shape: ', mf_df.shape , ' , ', mf_df.columns)
 print ('msgs_features_df: ', mf_df)
 
 print (mf_df)
