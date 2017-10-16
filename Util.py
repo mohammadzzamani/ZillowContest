@@ -141,7 +141,7 @@ def get_submission_format(data):
     data.columns = cols
     print (data.columns)
     print (data.shape)
-    submission_df = pd.melt(data, id_vars=["parcelid"],var_name="transactiondate", value_name="logerror")
+    submission_df = pd.melt(data, id_vars=["ParcelId"],var_name="transactiondate", value_name="logerror")
     print ('submission_df: ')
     print (submission_df)
     print (submission_df.shape)
