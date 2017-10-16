@@ -127,12 +127,12 @@ def cats_to_int(data1, data2):
 
         for col in cat_columns:
             print ('col:  ' , col)
-            l1 = list(data1[col].unique())
-            l2 = list(data2[col].unique())
-            l = list(set(l1 + l2))
+            l1 = set(data1[col].values)
+            l2 = set(data2[col].values)
+            l = list(l1.update(l2))
             print ('l: ' , l)
-            data1[col] = l.index(data1[col])
-            data2[col] = l.index(data2[col])
+            data1[col] = [ l.index(c) for c in data1[col]]
+            data2[col] = [ l.index(c) for c in data2[col]]
 
         return data1, data2
 

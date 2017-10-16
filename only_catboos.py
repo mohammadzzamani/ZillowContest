@@ -29,6 +29,7 @@ train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiond
 train2016 = train2016.sample(frac=0.01)
 train2017 = train2017.sample(frac=0.01)
 
+print ('adding date features')
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
@@ -121,6 +122,7 @@ test_df = pd.merge(test_df, submission_df, how='left', on='ParcelId')
 
 # test_df_temp['transactiondate'] = pd.Timestamp('2016-10-01')
 # test_df_final = pd.concat([test_df, train2017], axis = 0)
+print ('adding date features to test data')
 test_df = add_date_features(test_df, drop_transactiondate=False)
 test_df.set_index(['ParcelId', 'transactiondate'])
 Xtest = test_df[train_features]
