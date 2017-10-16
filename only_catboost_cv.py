@@ -73,8 +73,12 @@ def cross_validation(all_df, folds = 5):
             mean_  = np.mean(Ypreds[1:], axis=0)
             evaluate(thisYtest, mean_, pre= 'mean: ')
             # Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:], axis=0)))
+            avg = Ypred[0,:]
+            wmean_ = [ mean_[i] if (np.sign(mean_[i]) == np.sign(avg[i]) and np.abs(mean_[i])> np.abs(avg[i]) ) else mean_all[i] for i in range(mean_) ]
+            evaluate(thisYtest, wmean_, pre= 'wmean: ')
             Ypreds = np.vstack((Ypreds, mean_))
             Ypreds = np.vstack((Ypreds, mean_all))
+            Ypreds = np.vstack((Ypreds, wmean_))
 
         YpredsAll = stack_folds_preds(Ypreds, YpredsAll, 1)
 
@@ -92,7 +96,12 @@ print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
 
+print('Loading Language ...')
+house_region = pd.read_csv('zillow_data/hid_rid.csv', low_memory = False)
+region_feat = pd.read_csv('zillow_data/rid_feat.csv', low_memory = False)
 
+language = pd.merge(house_region, region_feat, how = 'left', on = 'hid')
+language.rename(columns = {'hid': 'parcelid'})
 
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
@@ -102,7 +111,9 @@ sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory 
 
 print('Merge Train with Properties ...')
 train2016 = pd.merge(train2016, properties2016, how = 'left', on = 'parcelid')
+train2016 = pd.merge(train2016, language, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
+train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
 
 # print('Tax Features 2017  ...')
 # train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
@@ -115,34 +126,34 @@ del properties2017#, test_df, properties2016, train2016, train2017
 gc.collect();
 
 
-ESTIMATORS = [
-            mean_est(),
-            # GradientBoostingRegressor(n_estimators= 150, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.05, learning_rate=0.01),
-            # GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.02),
-            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
-            # GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
-            # GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=4, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
-            CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5),
-            # CatBoostRegressor(iterations=530, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6),
-            # CatBoostRegressor(iterations=600, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7),
-            # CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
-            # CatBoostRegressor(iterations=400, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9),
-        ]
+# ESTIMATORS = [
+#             mean_est(),
+#             # GradientBoostingRegressor(n_estimators= 150, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.05, learning_rate=0.01),
+#             # GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.02),
+#             GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
+#             # GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
+#             # GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=4, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
+#             CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5),
+#             # CatBoostRegressor(iterations=530, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6),
+#             # CatBoostRegressor(iterations=600, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7),
+#             # CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
+#             # CatBoostRegressor(iterations=400, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9),
+#         ]
 
 
 ESTIMATORS = [
             mean_est(),
             # GradientBoostingRegressor(n_estimators= 150, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.05, learning_rate=0.01),
-            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.02),
-            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.02),
-            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
-            GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
-            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=4, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
-            CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.8),
-            CatBoostRegressor(iterations=500, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
-            CatBoostRegressor(iterations=500, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
-            CatBoostRegressor(iterations=550, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8, rsm=0.85),
-            CatBoostRegressor(iterations=600, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.85),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.03, learning_rate=0.02),
+            CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.85),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.02),
+            CatBoostRegressor(iterations=600, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
+            CatBoostRegressor(iterations=600, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
+            GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.03),
+            CatBoostRegressor(iterations=600, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8, rsm=0.85),
+            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03),
+            CatBoostRegressor(iterations=550, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.9)
             # CatBoostRegressor(iterations=530, learning_rate=0.03,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6),
             # CatBoostRegressor(iterations=600, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7),
             # CatBoostRegressor(iterations=500, learning_rate=0.02,depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
