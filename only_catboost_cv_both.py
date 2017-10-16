@@ -93,8 +93,8 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
                 Ypreds = np.vstack((Ypreds, mean_all))
                 # Ypreds = np.vstack((Ypreds, wmean_))
 
-        YpredsAll[name] = stack_folds_preds(Ypreds, YpredsAll[name], 1)
-        print YpredsAll[name].shape
+            YpredsAll[name] = stack_folds_preds(Ypreds, YpredsAll[name], 1)
+            print (YpredsAll[name].shape)
 
     for name, train_feats in train_features.items():
         print YpredsAll[name].shape
