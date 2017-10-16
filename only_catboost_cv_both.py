@@ -10,7 +10,7 @@ from Util import *
 from time import gmtime, strftime
 
 
-def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
+def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 5):
 
 
     fold_sizes = all_df.shape[0]*1.0/folds
@@ -23,7 +23,7 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
 
 
     # all_dfs = {'lang':data, 'nolang':data}
-    train_features = { 'lang':nolang_feats , 'nolang':train_feats}
+    train_features = { 'lang':train_feats , 'nolang':nolang_feats}
 
     YpredsAll = { 'lang' : None , 'nolang' :None}
     for i in range(0,folds):
@@ -105,15 +105,15 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
 
 
 print('Loading Properties ...')
-properties2016 = pd.read_csv('zillow_data/properties_2016_small.csv', low_memory = False)
-properties2017 = pd.read_csv('zillow_data/properties_2017_small.csv', low_memory = False)
+properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
+properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
 
 print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
 
 print('Loading Language ...')
-house_region = pd.read_csv('zillow_data/hid_rid_small.csv', low_memory = False)
+house_region = pd.read_csv('zillow_data/hid_rid.csv', low_memory = False)
 region_feat = pd.read_csv('zillow_data/rid_feat.csv', low_memory = False)
 region_featcount = pd.read_csv('zillow_data/rid_feat_count.csv', low_memory = False)
 
@@ -121,9 +121,9 @@ language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 language = pd.merge(language, region_featcount, how = 'left', on = 'rid')
 language = language.rename(columns = {'hid': 'parcelid'})
 
-print ('sampling train data')
-train2016 = train2016.sample(frac=0.01)
-train2017 = train2017.sample(frac=0.01)
+# print ('sampling train data')
+# train2016 = train2016.sample(frac=0.01)
+# train2017 = train2017.sample(frac=0.01)
 
 print ('adding date features')
 train2016 = add_date_features(train2016)
@@ -232,7 +232,7 @@ print("We use these for training: %s" % len(train_features))
 
 print ("Define categorial features !!")
 cat_feature_inds = []
-cat_unique_thresh = 15
+cat_unique_thresh = 1000
 for i, c in enumerate(train_features):
     num_uniques = len(train_df[c].unique())
     if num_uniques < cat_unique_thresh \
