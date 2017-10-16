@@ -83,7 +83,7 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
                 mean_all  = np.mean(Ypreds, axis=0)
                 evaluate(thisYtest, mean_all, pre= 'mean_all: ')
                 # Ypreds = np.vstack((Ypreds , np.mean(Ypreds[1:], axis=0)))
-                avg = Ypred[0,:]
+                # avg = Ypred[0,:]
                 # wmean_ = [ mean_[i] if (np.sign(mean_[i]) == np.sign(avg[i]) and np.abs(mean_[i])> np.abs(avg[i]) ) else mean_all[i] for i in range(len(mean_)) ]
                 # evaluate(thisYtest, wmean_, pre= 'wmean: ')
                 Ypreds = np.vstack((Ypreds, mean_))
