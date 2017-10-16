@@ -134,9 +134,11 @@ msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
 msgs_features_df['one'] = 1
 
 
+
+
 print ('grouping on row and col')
 mf_df = msgs_features_df.groupby(['row', 'col']).sum()
-mf_df = mf_df = mf_df.div(mf_df.one, axis='index')
+mf_df = mf_df.div(mf_df.one, axis='index')
 
 mf_df['row_col'] = str(mf_df['row'])+ '_' + str(mf_df['col'])
 
@@ -145,6 +147,8 @@ print ('msgs_features_df: ', mf_df)
 
 print (mf_df)
 
+
+msgs_features_df['row_col'] = str(msgs_features_df['row'])+ '_' + str(msgs_features_df['col'])
 # rows = mf_df['row'].values
 # cols = mf_df['row'].values
 #
@@ -154,12 +158,23 @@ print (mf_df)
 # mf_df['reg_3'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] < grid_size-1) else None for i in range(len(rows))]
 
 
-df = pd.DataFrame(columns=['rc_id'])
+df = None
 
 for i in range(1,grid_size):
     for j in range(1,grid_size):
         rows_cols = [ [ i-1 , j-1] , [i-1 , j] ,[i, j-1] , [i , j] ]
         ids = [ str(rc[0])+'_'+str(rc[1]) for rc in rows_cols ]
+
+        res = msgs_features_df.loc[msgs_features_df['row_col'].isin(ids)]
+        res['rcid'] = str(i)+'_'+str(j)
+        res = res.groupby(['rcid']).sum()
+        res = res.div(res.one, axis='index')
+
+        if df is None:
+            df =res
+        else:
+            df = pd.concat(df, res)
+        print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
 
 
 
