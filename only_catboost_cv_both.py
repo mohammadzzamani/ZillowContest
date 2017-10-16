@@ -144,9 +144,20 @@ region_feat = pd.read_csv('zillow_data/rid_feat.csv', low_memory = False)
 region_featcount = pd.read_csv('zillow_data/rid_feat_count.csv', low_memory = False)
 
 print ('merging language ...')
+
+
+
 region_df = pd.merge(region_feat, region_featcount, how = 'left', on = 'rid')
+
+print ('region_df: ', region_df.shape, ' , ', region_df.columns)
+
 language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
+print ('language: ', language.shape, ' , ',  len(list(set(language.hid.values))), ' , \n', language.columns)
+
+
 language = language.rename(columns = {'hid': 'parcelid'})
+
+
 
 language_features = language.columns
 
@@ -206,7 +217,7 @@ print ('<<< trainshapes: ', train2016.shape, ' , ', train2017.shape)
 # print ('<<< trainshapes: ', train2016.shape, ' , ', train2017.shape)
 #
 #
-# 
+#
 # train2016 = pd.merge(train2016, language, how = 'left', on = 'parcelid')
 # train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
 #
