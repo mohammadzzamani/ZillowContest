@@ -87,7 +87,10 @@ def retrieve():
         distinct_features = query.fetchall()
 
 
+        return houses_df, msgs_df, features_df, distinct_features
 
+
+houses_df, msgs_df, features_df, distinct_features = retrieve()
 
 msgs_features_df = pd.merge(msgs_df, features_df, how='left', on='message_id')
 
@@ -105,6 +108,9 @@ longitude_func = partial(calc_row_col_number(), lat_long = 'longitude')
 msgs_features_df['col'] = msgs_features_df.apply(longitude_func, axis=1)
 
 msgs_features_df = msgs_features_df.groupby(['row', 'col']).sum()
+
+print ('msgs_features_df.shape: ', msgs_features_df.shape)
+print ('msgs_features_df: ', msgs_features_df)
 
 
 
