@@ -168,7 +168,7 @@ if len(ESTIMATORS)>1:
     ypred_mean  = np.mean(Ypred, axis=0)
 
 
-prepare_final_submission(test_df, ypred_mean)
+prepare_final_submission(test_df, ypred_mean, 'data/nolang_cbgb_finalprediction.csv')
 # test_df['logerror'] = ypred_mean
 
 
