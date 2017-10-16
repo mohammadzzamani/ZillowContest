@@ -146,7 +146,7 @@ print ('msgs_features_df: ', mf_df)
 
 mf_df = mf_df.drop('message_id', 1)
 
-print (mf_df)
+print ('mf_df: ' , mf_df)
 
 
 # msgs_features_df['row_col'] = str(msgs_features_df['row'])+ '_' + str(msgs_features_df['col'])
@@ -175,10 +175,25 @@ for i in range(1,grid_size):
 
         if res.shape[0] > 0:
             if df is None:
-                df =res
+                df =res.copy()
+
             else:
-                df = pd.concat(df, res)
+                df = pd.concat((df, res))
             print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
+
+
+
+houses_df['rcid'] = None
+
+houses_df['row'] = houses_df.latitude.map(calc_row_number)
+
+houses_df['col'] = houses_df.longitude.map(calc_col_number)
+
+for index , row in houses_df.iterrows():
+
+
+
+
 
 
 
