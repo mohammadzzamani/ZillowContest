@@ -107,7 +107,7 @@ region_featcount = pd.read_csv('zillow_data/rid_feat_count.csv', low_memory = Fa
 
 language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 language = pd.merge(language, region_featcount, how = 'left', on = 'rid')
-language.rename(columns = {'hid': 'parcelid'})
+language = language.rename(columns = {'hid': 'parcelid'})
 
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
