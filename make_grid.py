@@ -212,7 +212,7 @@ for index , row in houses_df.iterrows():
 
     mind = 1000000000.0
     mini = -1
-    for i , r in temp:
+    for i , r in temp.iterrows():
         d = euclidean([row.latitude, row.longitude], [r.latitude, r.longitude])
         if d < mind:
             mind = d
