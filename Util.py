@@ -184,7 +184,7 @@ def prepare_final_submission(submission_df, Ypred, type= 0):
         print (submission_df.iloc[1:50, :])
 
 
-        submission_df = submission_df.pivot_table(values='logerror', index='parcelid', columns='transactiondate')
+        submission_df = submission_df.pivot_table(values='logerror', index='ParcelId', columns='transactiondate')
 
         submission_df.reset_index(inplace=True)
 
