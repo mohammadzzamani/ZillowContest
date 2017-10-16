@@ -34,7 +34,7 @@ train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
 print('Loading Sample ...')
-sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
+sample_submission = pd.read_csv('zillow_data/sample_submission_small.csv', low_memory = False)
 # sample_submission = sample_submission.sample(frac=0.004)
 
 
@@ -134,12 +134,12 @@ ESTIMATORS = [
             GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.02),
             CatBoostRegressor(iterations=65, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
             GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=1, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.02),
-            CatBoostRegressor(iterations=60, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
-            GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=2, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
-            CatBoostRegressor(iterations=60, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
-            GradientBoostingRegressor(n_estimators= 20, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.03),
-            CatBoostRegressor(iterations=55, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.9),
-            GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03)
+            # CatBoostRegressor(iterations=60, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
+            # GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=2, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
+            # CatBoostRegressor(iterations=60, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8),
+            # GradientBoostingRegressor(n_estimators= 20, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.03),
+            # CatBoostRegressor(iterations=55, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.9),
+            # GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03)
     ]
 
 print ('features: ' , train_features, ' \n and , ', Xtrain.shape, ' , ', Ytrain.shape, ' , ', Xtest.shape)
