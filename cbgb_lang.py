@@ -36,6 +36,8 @@ print ('merging language ...')
 region_df = pd.merge(region_feat, region_featcount, how = 'left', on = 'rid')
 language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 
+language.drop('rid', axis=1, inplace=True)
+
 language = language.rename(columns = {'hid': 'parcelid'})
 
 # train2016 = train2016.sample(frac=0.01)
