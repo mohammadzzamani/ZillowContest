@@ -145,7 +145,7 @@ def get_submission_format(data):
     print (data.shape)
     submission_df = pd.melt(data, id_vars=["ParcelId"],var_name="transactiondate", value_name="logerror")
     print ('submission_df: ')
-    submission_df['transactiondate'] = pd.Timestamp(submission_df['transactiondate'])
+    submission_df['transactiondate'] = [pd.Timestamp(str(s)) for s in  submission_df['transactiondate']]
     print (submission_df)
     print (submission_df.shape)
     return submission_df
