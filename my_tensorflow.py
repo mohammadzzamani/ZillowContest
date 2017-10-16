@@ -108,7 +108,7 @@ def calc(x, y, w0, w1, w2, w3, w4, b0,b1,b2, b3, b4, const):
 
     return [ predictions, error ]
 
-def run_(train_features, train_prices, test_features, test_prices, num_steps=4000, batch_size= 100 ):
+def run_(train_features, train_prices, test_features, test_prices, num_steps=10000, batch_size= 1 ):
     print ('run_')
 
     print ('max, min: ' , np.max(test_prices), ' , ', np.min(test_prices))
@@ -207,7 +207,7 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
 
             if i % 10 == 0:
                 # optimizer.__setattr__('learning_rate', learning_rate * 0.99)
-                # print('i: ' , i , ' , ', sess.run(cost))
+                print('i: ' , i , ' , ', sess.run(cost))
                 # y_pred , test_cost = calc(test_features, test_prices, w0, w1, w2, b0, b1, b2,const)
                 # print ('preds: ' , sess.run(y_pred))
                 optimizer.__setattr__('learning_rate', learning_rate)
@@ -216,7 +216,7 @@ def run_(train_features, train_prices, test_features, test_prices, num_steps=400
                 predictions = sess.run(y_pred)
 
                 # print ('test_y: ' , test_prices)
-                print('preds: ' , predictions[:5])
+                print('preds: ' , predictions[:5], ' , ', train_prices[:5])
 
                 tcost = sess.run(train_cost)
                 print(tcost)

@@ -21,46 +21,15 @@ from sklearn import preprocessing
 
 
 
-class mean_est:
-    def __init__(self,type='regression'):
-        self.type = type
-        self.mean = None
-
-    def fit(self, X, y):
-        print ('fit: ' , X.shape ,  '  , ' , y.shape)
-        self.mean = np.mean(y)
-        if self.type is 'classification':
-            self.mean = np.sign(self.mean)
-
-    def predict(self, X):
-        print ('predict: ' , X.shape )
-        return np.array([ self.mean for i in range(X.shape[0])])
 
 alphas=[0.0000000001,0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001 , 0.0001,0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000]
 
 
-def into_classes(data):
-    # print 'data: ' , data
-    if abs(data)<=1:
-        return 0
-    elif data<-1:
-        return -1
-    else: return 1
-
-    # mid = data[abs(data.logerror)<=1]
-    # low = data[data.logerror< -1]
-    # high = data[data.logerror> 1]
-    # print low.shape, ' , ', mid.shape, ' , ', high.shape
 
 
-def outlier_detection(data):
-    print ('outlier_detection...')
-    print (data.shape)
-    # print type(data)
-    # data = data[np.where(data[:,0]<0.9)]
-    data = data[abs(data.logerror ) < 15]
-    print (data.shape)
-    return data
+
+
+
 
 def cross_validation_clf(all_df, clf, folds = 10):
 
@@ -179,15 +148,7 @@ def cross_validation_clf(all_df, clf, folds = 10):
     print ('corr: ' , YAll.corr())
 
 
-def stack_folds_preds(pred_fold, pred_all=None, axis=0):
-    if pred_all is None:
-        pred_all = pred_fold
-    else:
-        # if axis==0:
-        pred_all = np.vstack((pred_all, pred_fold)) if axis==0 else np.hstack((pred_all, pred_fold))
-        # else:
-        #     pred_all = np.vstack((pred_all, pred_fold))
-    return pred_all
+
 
 def cross_validation(all_df, clf, folds = 10):
     all_df['selection'] = 0
@@ -489,30 +450,8 @@ def learning_for_submisstion_cv(all_df, folds = 10, submission_df = None):
 
 
 
-def transform_back(values, m, v):
 
-    #print 'v: ', type(v), ' , ', type(m) , ' , ', type(values)
-    # print 'm: ', m
-    #print values.shape
-    #print m.shape
-    values = (values*v ) + m
-    return values
 
-def evaluate(Ytrue, Ypred, type='regression',  pre = 'pre ', mea=None, va=None):
-    if not mea is None:
-        Ytrue = transform_back(Ytrue, mea, va)
-        Ypred = transform_back(Ypred, mea, va)
-
-    mae = mean_absolute_error(Ytrue,Ypred)
-    mse = mean_squared_error(Ytrue,Ypred)
-    with open("res.txt", "a") as myfile:
-
-        if type is 'regression':
-            myfile.write(pre + 'mae: ' + str(mae)+ ' , mse: ' + str(mse) + ' \n' )
-            print ('mae: ' , mae, ' , mse: ', mse)
-        elif type is 'classification2':
-            print ('accuracy: ' , (2-mae)/2)
-    return [mae , mse]
 
 def prepare_final_submission(submission_df, Ypred):
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
