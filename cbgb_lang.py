@@ -203,7 +203,7 @@ print ('uniques: ' , len(list(set(ypred_mean))))
 print ('Ypred diff: ' , np.max(ypred_mean) , ' , ',  np.min(ypred_mean))
 
 
-prepare_final_submission(test_df, ypred_mean, output_filename='data/nolang_cbgb_finalprediction.csv')
+prepare_final_submission(test_df, ypred_mean, output_filename='data/lang_cbgb_finalprediction.csv')
 # test_df['logerror'] = ypred_mean
 
 
