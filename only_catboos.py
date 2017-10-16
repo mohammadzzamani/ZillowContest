@@ -11,14 +11,6 @@ from time import gmtime, strftime
 
 
 
-def outlier_detection(data):
-    print ('outlier_detection...')
-    print (data.shape)
-    # print type(data)
-    # data = data[np.where(data[:,0]<0.9)]
-    data = data[abs(data.logerror ) < 15]
-    print (data.shape)
-    return data
 
 
 print('Loading Properties ...')
@@ -29,13 +21,7 @@ print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
 
-# def add_date_features(df):
-#     df["transaction_year"] = df["transactiondate"].dt.year
-#     df["transaction_month"] = (df["transactiondate"].dt.year - 2016)*12 + df["transactiondate"].dt.month
-#     df["transaction_day"] = df["transactiondate"].dt.day
-#     df["transaction_quarter"] = (df["transactiondate"].dt.year - 2016)*4 +df["transactiondate"].dt.quarter
-#     df.drop(["transactiondate"], inplace=True, axis=1)
-#     return df
+
 
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
@@ -52,9 +38,9 @@ train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
 
 print('Concat Train 2016 & 2017 ...')
 train_df = pd.concat([train2016, train2017], axis = 0)
-test_df = pd.merge(sample_submission[['ParcelId']], properties2016.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
+test_df = pd.merge(sample_submission[['ParcelId']], properties2017.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
 
-del properties2016, properties2017, train2016, train2017
+del  properties2017, train2016, train2017#, properties2016
 gc.collect();
 
 print('Remove missing data fields ...')
