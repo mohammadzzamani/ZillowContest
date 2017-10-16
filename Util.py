@@ -132,7 +132,7 @@ def add_date_features(df, drop_transactiondate=True):
 
 def get_submission_format(data):
     print ('get_submission_format ...')
-    data = data[['parcelid']]
+    data = data[['ParcelId']]
     print (data)
     cols = ['ParcelId', '10/1/16', '11/1/16', '12/1/16', '10/1/17', '11/1/17', '12/1/17']
     for i in range(1 ,len(cols)):
