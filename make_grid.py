@@ -83,7 +83,10 @@ def retrieve():
         query = cursor.execute(sql)
         features = query.fetchall()
         features_df = pd.DataFrame(data= features, columns = ['message_id', 'feat', 'value', 'group_norm'])
+
         features_df = pd.pivot_table(features_df, values='group_norm', index=['message_id'],columns=['feat'])
+        features_df.reset_index(inplace=True)
+
         print ('features_df: ', features_df.shape, ' , ', features_df.columns)
         print (features_df)
 
@@ -93,11 +96,24 @@ def retrieve():
         distinct_features = query.fetchall()
 
 
-        return houses_df, msgs_df, features_df, distinct_features
+        all_f_df = None
+        for f in distinct_features:
+            sql = 'select {0}, {1} from {2}'.format('message_id', 'group_norm', feature_table)
+            query = cursor.execute(sql)
+            res = query.fetchall()
+            f_df = pd.DataFrame(data= res, columns= ['message_id' , str(f)])
+            # f_df.set_index(['message_id'], inplace= True)
+            if all_f_df is None:
+                all_f_df = f_df
+            else:
+                all_f_df = pd.merge(all_f_df, f_df, on='message_id', how='outer')
+
+        print ('all_f_df.shape: ' , all_f_df.shape, ' , ', all_f_df.columns)
+        return houses_df, msgs_df, all_f_df, distinct_features
 
 
 
-houses_df, msgs_df, features_df, distinct_features = retrieve()
+houses_df, msgs_df, all_f_df, distinct_features = retrieve()
 
 print ('merging msgs and features')
 msgs_features_df = pd.merge(msgs_df, features_df, how='left', on='message_id')
@@ -118,18 +134,29 @@ msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
 
 print ('grouping on row and col')
 mf_df = msgs_features_df.groupby(['row', 'col']).mean()
-
+mf_df['row_col'] = str(mf_df['row'])+ '_' + str(mf_df['col'])
 
 print ('msgs_features_df.shape: ', mf_df.shape)
 print ('msgs_features_df: ', mf_df)
 
-rows = mf_df['row'].values
-cols = mf_df['row'].values
+# rows = mf_df['row'].values
+# cols = mf_df['row'].values
+#
+# mf_df['reg_0'] = [ str(rows[i])+'_'+str(cols[i]) if (rows[i] > 0 and cols[i] > 0) else None for i in range(len(rows))]
+# mf_df['reg_1'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] > 0) else None for i in range(len(rows))]
+# mf_df['reg_2'] = [ str(rows[i])+'_'+str(cols[i]+1) if (rows[i] > 0 and cols[i] < grid_size-1) else None for i in range(len(rows))]
+# mf_df['reg_3'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] < grid_size-1) else None for i in range(len(rows))]
 
-mf_df['reg_0'] = [ str(rows[i])+'_'+str(cols[i]) if (rows[i] > 0 and cols[i] > 0) else None for i in range(len(rows))]
-mf_df['reg_1'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] > 0) else None for i in range(len(rows))]
-mf_df['reg_2'] = [ str(rows[i])+'_'+str(cols[i]+1) if (rows[i] > 0 and cols[i] < grid_size-1) else None for i in range(len(rows))]
-mf_df['reg_3'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] < grid_size-1) else None for i in range(len(rows))]
+
+df = DataFrame(columns=['rc_id'])
+
+for i in range(1,grid_size):
+    for j in range(1,grid_size):
+        rows_cols = [ [ i-1 , j-1] , [i-1 , j] ,[i, j-1] , [i , j] ]
+        ids = [ str(rc[0])+'_'+str(rc[1]) for rc in rows_cols ]
+
+
+
 
 
 
