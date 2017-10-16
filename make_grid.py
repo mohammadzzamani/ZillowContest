@@ -5,6 +5,7 @@ import sys
 import pandas as pd
 import numpy as np
 from functools import partial
+from scipy.spatial.distance import euclidean
 
 # database connection info
 database = 'zillow'
@@ -40,8 +41,21 @@ def calc_col_number(longitude):
     return int( (longitude - bound['lon'][0])/(bound['lon'][1] - bound['lon'][0]) * grid_size)
 
 
+def get_options(r, c):
+    options = [ [r,c] , [r+1,c] , [r,c+1], [r+1,c+1]]
+    res = []
+    for o in options:
+        not_pick = False
+        for l in o:
+            if l <1 or l>grid_size-1:
+                not_pick = True
+        if not_pick == False:
+            res.append(str(o[0])+'_'+str(o[1]))
+    return res
 
 
+    rows_cols = [ [ i-1 , j-1] , [i-1 , j] ,[i, j-1] , [i , j] ]
+    ids = [ str(rc[0])+'_'+str(rc[1]) for rc in rows_cols ]
 
 def connectToDB():
     # Create SQL engine
@@ -95,20 +109,6 @@ def retrieve():
         query = cursor.execute(sql)
         distinct_features = query.fetchall()
 
-
-        # all_f_df = None
-        # for f in distinct_features:
-        #     sql = 'select {0}, {1} from {2}'.format('message_id', 'group_norm', feature_table)
-        #     query = cursor.execute(sql)
-        #     res = query.fetchall()
-        #     f_df = pd.DataFrame(data= res, columns= ['message_id' , str(f)])
-        #     # f_df.set_index(['message_id'], inplace= True)
-        #     if all_f_df is None:
-        #         all_f_df = f_df
-        #     else:
-        #         all_f_df = pd.merge(all_f_df, f_df, on='message_id', how='outer')
-        #
-        # print ('all_f_df.shape: ' , all_f_df.shape, ' , ', all_f_df.columns)
         return houses_df, msgs_df, features_df, distinct_features
 
 
@@ -178,17 +178,51 @@ for i in range(1,grid_size):
                 df =res.copy()
             else:
                 df = pd.concat((df, res))
-            print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
+            # print ('i , j , res: ', i , ' , ' , j , ' , ' , res, ' , ', df.shape)
 
+
+print ('df: ' , df.shape, ' , ' , df.columns)
+df.set_index('rcid', inplace=True)
+print ('df: ' , df.shape, ' , ' , df.columns)
 
 
 houses_df['rcid'] = None
 
 houses_df['row'] = houses_df.latitude.map(calc_row_number)
-
 houses_df['col'] = houses_df.longitude.map(calc_col_number)
 
-# for index , row in houses_df.iterrows():
+
+
+def dist (a, b):
+    d = 0
+    for i in range(len(a)):
+        d+= np.square(a[i] - b[i])
+    d = np.sqrt(d)
+    return d
+
+
+cntr = 0
+for index , row in houses_df.iterrows():
+
+    options = get_options(row['row'], row['col'])
+    temp = df[df.index.isin(options)]
+
+    mind = 1000000000.0
+    mini = -1
+    for i , r in temp:
+        d = euclidean([row.latitude, row.longitude], [r.latitude, r.longitude])
+        if d < mind:
+            mind = d
+            mini = i
+
+    houses_df['rcid'] = mini
+
+    cntr += 1
+    if cntr % 100 == 0:
+        print (cntr,  ' , ', mind , ' , ', mini)
+
+
+
 
 
 
