@@ -10,16 +10,15 @@ from Util import *
 from time import gmtime, strftime
 
 
-def cross_validation(data, train_feats= [], nolang_feats = [], folds = 5):
+def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
 
-    data = data.sample(frac=0.2)
 
-    fold_sizes = data.shape[0]*1.0/folds
+    fold_sizes = all_df.shape[0]*1.0/folds
 
 
 
     # Ytest = all_df.iloc[:,0]
-    Ytest = data.logerror
+    Ytest = all_df.logerror
 
 
 
@@ -46,9 +45,9 @@ def cross_validation(data, train_feats= [], nolang_feats = [], folds = 5):
             print ('train.shape: ' , train.shape)
             print ('test.shape: ' , test.shape)
 
-            Xtrain = train[train_features]
+            Xtrain = train[train_feats]
             Ytrain = train.logerror
-            Xtest = test[train_features]
+            Xtest = test[train_feats]
             thisYtest = test.logerror
 
 
@@ -76,7 +75,7 @@ def cross_validation(data, train_feats= [], nolang_feats = [], folds = 5):
 
                 Ypreds = stack_folds_preds(Ypred, Ypreds, 0)
 
-                evaluate(thisYtest, Ypred, pre=str(cntr))
+                evaluate(thisYtest, Ypred, pre=name + '_' + str(cntr))
 
             if len(ESTIMATORS)>1:
                 mean_  = np.mean(Ypreds[1:], axis=0)
@@ -117,6 +116,9 @@ language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 language = pd.merge(language, region_featcount, how = 'left', on = 'rid')
 language = language.rename(columns = {'hid': 'parcelid'})
 
+train2016 = train2016.sample(frac=0.1)
+train2017 = train2017.sample(frac=0.1)
+
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
@@ -138,7 +140,7 @@ train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
 train_df = pd.concat([train2016, train2017], axis = 0)
 # test_df = pd.merge(sample_submission[['ParcelId']], properties2016.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
 
-del properties2017#, test_df, properties2016, train2016, train2017
+del properties2017, properties2016, train2016, train2017 #, test_df,
 gc.collect();
 
 
@@ -161,11 +163,11 @@ ESTIMATORS = [
             mean_est(),
             # GradientBoostingRegressor(n_estimators= 150, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.75,  min_impurity_decrease=0.05, learning_rate=0.01),
 
-            CatBoostRegressor(iterations=500, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.7),
-            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.7,  min_impurity_decrease=0.03, learning_rate=0.02),
+            CatBoostRegressor(iterations=50, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.7),
+            GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.7,  min_impurity_decrease=0.03, learning_rate=0.02),
 
-            CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=2.5,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.75),
-            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.025, learning_rate=0.02),
+            CatBoostRegressor(iterations=60, learning_rate=0.02, depth=6, l2_leaf_reg=2.5,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.75),
+            GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.025, learning_rate=0.02),
 
             # CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.85),
             # GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.03, learning_rate=0.02),
