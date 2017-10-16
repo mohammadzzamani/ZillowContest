@@ -230,7 +230,7 @@ print("We use these for training: %s" % len(train_features))
 
 print ("Define categorial features !!")
 cat_feature_inds = []
-cat_unique_thresh = 1000
+cat_unique_thresh = 15
 for i, c in enumerate(train_features):
     num_uniques = len(train_df[c].unique())
     if num_uniques < cat_unique_thresh \

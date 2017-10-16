@@ -137,8 +137,8 @@ def cats_to_int(data1, data2):
             print 'set l: ' , l
             # l = list(l1.update(l2))
             # print ('l: ' , l)
-            data1[col] = [ l.index(c) for c in data1[col] if c == c]
-            data2[col] = [ l.index(c) for c in data2[col] if c == c]
+            data1[col] = [ l.index(c) if c in l else c for c in data1[col]  ]
+            data2[col] = [ l.index(c) if c in l else c for c in data2[col]  ]
 
         return data1, data2
 
