@@ -176,7 +176,7 @@ def get_submission_format(data):
     print (submission_df.shape)
     return submission_df
 
-def prepare_final_submission(submission_df, Ypred, type= 0):
+def prepare_final_submission(submission_df, Ypred, type= 0, output_filename='data/final_submission_outlierDetection.csv'):
     print ('prepare_final_submission ...')
     # print ('submission_df.columns: ' , submission_df.columns)
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
@@ -213,6 +213,6 @@ def prepare_final_submission(submission_df, Ypred, type= 0):
     print ('final_submission_df.shape: ' , submission_df.shape)
     print ('final_submission_df.columns: ' , submission_df.columns)
     print (submission_df)
-    final_submission_name = 'data/final_submission_outlierDetection.csv'
+    # final_submission_name = 'data/final_submission_outlierDetection.csv'
 
-    submission_df.to_csv(final_submission_name)
+    submission_df.to_csv(output_filename)

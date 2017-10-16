@@ -39,7 +39,7 @@ sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory 
 
 
 print('Merge Train with Properties ...')
-train2016 = pd.merge(train2016, properties2017, how = 'left', on = 'parcelid')
+train2016 = pd.merge(train2016, properties2016, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
 
 # print('Tax Features 2017  ...')

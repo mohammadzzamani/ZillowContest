@@ -105,8 +105,8 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 5):
 
 
 print('Loading Properties ...')
-properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
-properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
+properties2016 = pd.read_csv('zillow_data/properties_2016_small.csv', low_memory = False)
+properties2017 = pd.read_csv('zillow_data/properties_2017_small.csv', low_memory = False)
 
 print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
@@ -129,6 +129,8 @@ print ('adding date features')
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
+print ('<<< trainshapes: ', train2016.shape, ' , ', train2017.shape)
+
 language_features = language.columns
 
 print('Loading Sample ...')
@@ -136,15 +138,24 @@ sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory 
 
 print('Merge Train with Properties ...')
 train2016 = pd.merge(train2016, properties2016, how = 'left', on = 'parcelid')
-train2016 = pd.merge(train2016, language, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
+
+print ('<<< trainshapes: ', train2016.shape, ' , ', train2017.shape)
+
+
+
+train2016 = pd.merge(train2016, language, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
+
+print ('<<< trainshapes: ', train2016.shape, ' , ', train2017.shape)
+
 
 # print('Tax Features 2017  ...')
 # train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
 
 print('Concat Train 2016 & 2017 ...')
 train_df = pd.concat([train2016, train2017], axis = 0)
+print ('>>>>>> train shape: ', train_df.shape)
 # test_df = pd.merge(sample_submission[['ParcelId']], properties2016.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
 
 del properties2017, properties2016, train2016, train2017 #, test_df,
@@ -244,6 +255,8 @@ for i, c in enumerate(train_features):
 
 print("Cat features are: %s" % [train_features[ind] for ind in cat_feature_inds])
 
+print ('>>>>>> train shape: ', train_df.shape)
+
 print ("Replacing NaN values by -999 !!")
 train_df.fillna(-999, inplace=True)
 # test_df.fillna(-999, inplace=True)
@@ -251,11 +264,16 @@ train_df.fillna(-999, inplace=True)
 
 # train_df = outlier_detection(train_df, thresh = 1)
 train_df = cats_to_int_1param(train_df)
-train_features = train_features + ['logerror']
-print ' ... ' , len(train_features)
+
+print ('>>>>>> train shape: ', train_df.shape)
+
+# train_features = train_features + ['logerror']
+print (' ... ' , len(train_features))
 nolanguage_features = [ f for f in train_features if not f in language_features ]
 # train_df = train_df[ train_features+['logerror']]
-print ' ... ' , len(train_features) , ' , ', nolanguage_features, ' , ', train_df.shape
+print (' ... ' , len(train_features) , ' , ', train_df.shape )
+print (' features: ',  nolanguage_features,' , \n ', train_features)
+
 
 
 # print ("Training time !!")
