@@ -11,16 +11,24 @@ from time import gmtime, strftime
 
 
 def cross_validation(data, train_feats= [], nolang_feats = [], folds = 5):
+
+    data = data.sample(frac=0.2)
+
     fold_sizes = data.shape[0]*1.0/folds
+
+
 
     # Ytest = all_df.iloc[:,0]
     Ytest = data.logerror
 
-    all_dfs = {'lang':data[nolang_feats], 'nolang':data}
+
+
+    # all_dfs = {'lang':data, 'nolang':data}
+    train_features = { 'lang':nolang_feats , 'nolang':train_feats}
 
     YpredsAll = { 'lang' : None , 'nolang' :None}
     for i in range(0,folds):
-        for name, all_df in all_dfs.items():
+        for name, train_feats in train_features.items():
             test_start = i* fold_sizes
             test_end = (i+1) * fold_sizes
             selection = [ True if ( i >=test_start and i < test_end) else False for i in range(all_df.shape[0])]
@@ -156,7 +164,8 @@ ESTIMATORS = [
             CatBoostRegressor(iterations=500, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.7),
             GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.7,  min_impurity_decrease=0.03, learning_rate=0.02),
 
-
+            CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=2.5,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.75),
+            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=0, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.025, learning_rate=0.02),
 
             # CatBoostRegressor(iterations=600, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.85),
             # GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.03, learning_rate=0.02),
