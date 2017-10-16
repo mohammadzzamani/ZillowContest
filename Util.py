@@ -132,9 +132,9 @@ def cats_to_int(data1, data2):
             # print 'l1, l2: ' , l1, ' , ', l2
             l = l1 + l2
             l = [ ll for ll in l if ll==ll]
-            print 'l: ' , l
+            # print 'l: ' , l
             l = list(set(l))
-            print 'set l: ' , l
+            print 'len l: ' , len(l)
             # l = list(l1.update(l2))
             # print ('l: ' , l)
             data1[col] = [ l.index(c) if c in l else c for c in data1[col]  ]
@@ -176,7 +176,7 @@ def get_submission_format(data):
 
 def prepare_final_submission(submission_df, Ypred, type= 0):
     print ('prepare_final_submission ...')
-    print ('submission_df.columns: ' , submission_df.columns)
+    # print ('submission_df.columns: ' , submission_df.columns)
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
     submission_df['logerror'] = Ypred
     submission_df = submission_df[['logerror']]

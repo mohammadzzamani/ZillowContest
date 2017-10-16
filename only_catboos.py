@@ -14,8 +14,8 @@ from time import gmtime, strftime
 
 
 print('Loading Properties ...')
-properties2016 = pd.read_csv('zillow_data/properties_2016_small.csv', low_memory = False)
-properties2017 = pd.read_csv('zillow_data/properties_2017_small.csv', low_memory = False)
+properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
+properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
 
 # properties2016 = properties2016.sample(frac=0.01)
 # properties2017 = properties2017.sample(frac=0.01)
@@ -35,7 +35,7 @@ train2017 = add_date_features(train2017)
 
 print('Loading Sample ...')
 sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
-sample_submission = sample_submission.sample(frac=0.004)
+# sample_submission = sample_submission.sample(frac=0.004)
 
 
 print('Merge Train with Properties ...')
