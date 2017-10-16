@@ -71,6 +71,8 @@ def retrieve():
         query = cursor.execute(sql)
         houses = query.fetchall()
         houses_df = pd.DataFrame(data= houses, columns = ['parcelid', 'latitude', 'longitude'])
+        houses_df['latitude'] = houses_df['latitude'] * 0.000001
+        houses_df['longitude'] = houses_df['longitude'] * 0.000001
         # get msgs
         sql='select {0}, {1}, {2} from {3}'.format('message_id', 'latitude', 'longitude', msg_table)
         query = cursor.execute(sql)
@@ -112,12 +114,24 @@ msgs_features_df['row'] = msgs_features_df.latitude.map(calc_row_number)
 msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
 
 print ('grouping on row and col')
-msgs_features_df = msgs_features_df.groupby(['row', 'col']).sum()
-
-print ('msgs_features_df.shape: ', msgs_features_df.shape)
-print ('msgs_features_df: ', msgs_features_df)
+mf_df = msgs_features_df.groupby(['row', 'col']).sum()
 
 
+print ('msgs_features_df.shape: ', mf_df.shape)
+print ('msgs_features_df: ', mf_df)
+
+rows = mf_df['row'].values
+cols = mf_df['row'].values
+
+mf_df['reg_0'] = [ str(rows[i])+'_'+str(cols[i]) if (rows[i] > 0 and cols[i] > 0) else None for i in range(len(rows))]
+mf_df['reg_1'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] > 0) else None for i in range(len(rows))]
+mf_df['reg_2'] = [ str(rows[i])+'_'+str(cols[i]+1) if (rows[i] > 0 and cols[i] < grid_size-1) else None for i in range(len(rows))]
+mf_df['reg_3'] = [ str(rows[i]+1)+'_'+str(cols[i]) if (rows[i] < grid_size-1 and cols[i] < grid_size-1) else None for i in range(len(rows))]
+
+
+
+
+# hr_df = mf_df['']
 
 
 
