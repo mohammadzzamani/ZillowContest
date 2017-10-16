@@ -107,6 +107,7 @@ print(Xtrain.shape, Ytrain.shape)
 
 
 submission_df = get_submission_format(test_df[['ParcelId']])
+print ('-------- shapes : ' , submission_df.shape , ' , ', test_df.shape)
 test_df = pd.merge(test_df, submission_df, how='left', on='ParcelId')
 
 
