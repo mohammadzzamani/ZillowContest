@@ -27,20 +27,23 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
 
     YpredsAll = { 'lang' : None , 'nolang' :None}
     for i in range(0,folds):
+
+        test_start = i* fold_sizes
+        test_end = (i+1) * fold_sizes
+        selection = [ True if ( i >=test_start and i < test_end) else False for i in range(all_df.shape[0])]
+        deselection = [ False if val == True else True for val in selection]
+
+        train = all_df.iloc[deselection]
+        test = all_df.iloc[selection]
+
+        train = outlier_detection(train, thresh=1)
+
+        # trnsfrm = None #transformation()
+        # train = trnsfrm.transform(train)
+
+
+
         for name, train_feats in train_features.items():
-            test_start = i* fold_sizes
-            test_end = (i+1) * fold_sizes
-            selection = [ True if ( i >=test_start and i < test_end) else False for i in range(all_df.shape[0])]
-            deselection = [ False if val == True else True for val in selection]
-
-            train = all_df.iloc[deselection]
-            test = all_df.iloc[selection]
-
-            train = outlier_detection(train, thresh=1)
-
-            # trnsfrm = None #transformation()
-            # train = trnsfrm.transform(train)
-
 
             print ('train.shape: ' , train.shape)
             print ('test.shape: ' , test.shape)

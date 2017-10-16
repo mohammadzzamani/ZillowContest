@@ -14,8 +14,13 @@ from time import gmtime, strftime
 
 
 print('Loading Properties ...')
-# properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
+properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
 properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
+
+properties2016 = properties2016.sample(frac=0.01)
+properties2017 = properties2017.sample(frac=0.01)
+
+properties2016, properties2017 = cats_to_int(properties2016, properties2017)
 
 print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)

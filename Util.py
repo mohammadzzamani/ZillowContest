@@ -120,6 +120,24 @@ def cats_to_int(data):
             data[col] = data[col].astype('category').cat.codes
         return data
 
+def cats_to_int(data1, data2):
+        print ('cats_to_int...')
+        cat_columns = data1.select_dtypes(['category','object']).columns
+        print ('cat_columns: ' , cat_columns)
+
+        for col in cat_columns:
+            print ('col:  ' , col)
+            l1 = list(data1[col].unique())
+            l2 = list(data2[col].unique())
+            l = list(set(l1 + l2))
+            print ('l: ' , l)
+            data1[col] = l.index(data1[col])
+            data2[col] = l.index(data2[col])
+
+        return data1, data2
+
+
+
 
 def add_date_features(df, drop_transactiondate=True):
     df["transaction_year"] = df["transactiondate"].dt.year
@@ -135,7 +153,7 @@ def get_submission_format(data):
     data = data[['ParcelId']]
     print (data)
     # cols = ['ParcelId', '10/1/16', '11/1/16', '12/1/16', '10/1/17', '11/1/17', '12/1/17']
-    cols = ['ParcelId', '16-10-1', '16-11-1', '16-12-1', '17-10-1', '17-11-1', '17-12-1']
+    cols = ['ParcelId', '2016-10-1', '2016-11-1', '2016-12-1', '2017-10-1', '2017-11-1', '2017-12-1']
     # pd.Timestamp('2016-09-30')
     for i in range(1 ,len(cols)):
         c = cols[i]
