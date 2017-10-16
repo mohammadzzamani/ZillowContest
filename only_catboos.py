@@ -142,6 +142,7 @@ ESTIMATORS = [
             GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03)
     ]
 
+print ('features: ' , train_features, ' \n and , ', Xtrain.shape, ' , ', Ytrain.shape, ' , ', Xtest.shape)
 
 # num_ensembles = len(ESTIMATORS)
 Ypreds = None
@@ -157,6 +158,9 @@ for cntr in range(len(ESTIMATORS)):
     print ('predicting ...', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
     Ypred = estimator.predict(Xtest)
 
+
+    print ('uniques: ' , len(list(set(Ypred))))
+    print ('Ypred diff: ' , np.max(Ypred) - np.min(Ypred))
 
     Ypreds = stack_folds_preds(Ypred, Ypreds, 0)
     print ('Ypred: ' , Ypred)
