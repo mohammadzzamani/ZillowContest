@@ -83,6 +83,9 @@ def retrieve():
         query = cursor.execute(sql)
         features = query.fetchall()
         features_df = pd.DataFrame(data= features, columns = ['message_id', 'feat', 'value', 'group_norm'])
+        features_df = pd.pivot_table(features_df, values='group_norm', index=['message_id'],columns=['feat'])
+        print ('features_df: ', features_df.shape, ' , ', features_df.columns)
+        print (features_df)
 
         # get feature names
         sql='select {0} from {1} group by {0}'.format('feat', feature_table)
@@ -114,7 +117,7 @@ msgs_features_df['row'] = msgs_features_df.latitude.map(calc_row_number)
 msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
 
 print ('grouping on row and col')
-mf_df = msgs_features_df.groupby(['row', 'col']).sum()
+mf_df = msgs_features_df.groupby(['row', 'col']).mean()
 
 
 print ('msgs_features_df.shape: ', mf_df.shape)
