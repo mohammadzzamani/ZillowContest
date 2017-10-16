@@ -124,7 +124,7 @@ test_df = pd.merge(test_df, submission_df, how='left', on='ParcelId')
 # test_df_final = pd.concat([test_df, train2017], axis = 0)
 print ('adding date features to test data')
 test_df = add_date_features(test_df, drop_transactiondate=False)
-test_df.set_index(['ParcelId', 'transactiondate'])
+test_df.set_index(['ParcelId', 'transactiondate'], inplace=True)
 Xtest = test_df[train_features]
 print(Xtest.shape)
 

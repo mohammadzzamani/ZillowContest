@@ -129,15 +129,16 @@ def cats_to_int(data1, data2):
             print ('col:  ' , col)
             l1 = list(set(data1[col].values))
             l2 = list(set(data2[col].values))
-            print 'l1, l2: ' , l1, ' , ', l2
+            # print 'l1, l2: ' , l1, ' , ', l2
             l = l1 + l2
+            l = [ ll for ll in l if ll==ll]
             print 'l: ' , l
             l = list(set(l))
             print 'set l: ' , l
             # l = list(l1.update(l2))
             # print ('l: ' , l)
-            data1[col] = [ l.index(c) for c in data1[col] if c is not None]
-            data2[col] = [ l.index(c) for c in data2[col] if c is not None]
+            data1[col] = [ l.index(c) for c in data1[col] if c == c]
+            data2[col] = [ l.index(c) for c in data2[col] if c == c]
 
         return data1, data2
 
