@@ -113,7 +113,7 @@ def retrieve():
 
 
 
-houses_df, msgs_df, all_f_df, distinct_features = retrieve()
+houses_df, msgs_df, msgs_features_df, distinct_features = retrieve()
 
 print ('merging msgs and features')
 msgs_features_df = pd.merge(msgs_df, features_df, how='left', on='message_id')
