@@ -22,7 +22,7 @@ def outlier_detection(data):
 
 
 print('Loading Properties ...')
-properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
+# properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
 properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
 
 print('Loading Train ...')
@@ -44,11 +44,11 @@ print('Loading Sample ...')
 sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
 
 print('Merge Train with Properties ...')
-train2016 = pd.merge(train2016, properties2016, how = 'left', on = 'parcelid')
+train2016 = pd.merge(train2016, properties2017, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
 
-print('Tax Features 2017  ...')
-train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
+# print('Tax Features 2017  ...')
+# train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
 
 print('Concat Train 2016 & 2017 ...')
 train_df = pd.concat([train2016, train2017], axis = 0)
@@ -120,7 +120,7 @@ Ytrain = train_df.logerror
 print(Xtrain.shape, Ytrain.shape)
 
 
-submission_df = get_submission_format(test_df[['logerror']])
+submission_df = get_submission_format(test_df[['ParcelId']])
 test_df = pd.merge(test_df, submission_df, how='left', on='ParcelId')
 
 
