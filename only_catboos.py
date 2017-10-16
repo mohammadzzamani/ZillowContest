@@ -21,13 +21,16 @@ print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
 
-
+train2016 = train2016.sample(frac=0.01)
+train2017 = train2017.sample(frac=0.01)
 
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
 print('Loading Sample ...')
 sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
+sample_submission = sample_submission.sample(frac=0.002)
+
 
 print('Merge Train with Properties ...')
 train2016 = pd.merge(train2016, properties2017, how = 'left', on = 'parcelid')
@@ -98,7 +101,7 @@ train_df.fillna(-999, inplace=True)
 # train_df = outlier_detection(train_df)
 test_df.fillna(-999, inplace=True)
 
-train_df = train_df.sample(frac=0.1)
+# train_df = train_df.sample(frac=0.1)
 
 print ("Training time !!")
 Xtrain = train_df[train_features]

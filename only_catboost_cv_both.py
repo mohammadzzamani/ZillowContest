@@ -93,7 +93,7 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
             YpredsAll[name] = stack_folds_preds(Ypreds, YpredsAll[name], 1)
 
 
-        for name, all_df in all_dfs.items():
+        for name, train_feats in train_features.items():
             for ypred in YpredsAll[name]:
                 evaluate(Ytest, ypred)
 
@@ -116,9 +116,11 @@ language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 language = pd.merge(language, region_featcount, how = 'left', on = 'rid')
 language = language.rename(columns = {'hid': 'parcelid'})
 
-train2016 = train2016.sample(frac=0.1)
-train2017 = train2017.sample(frac=0.1)
+print ('sampling train data')
+train2016 = train2016.sample(frac=0.01)
+train2017 = train2017.sample(frac=0.01)
 
+print ('adding date features')
 train2016 = add_date_features(train2016)
 train2017 = add_date_features(train2017)
 
@@ -136,7 +138,7 @@ train2017 = pd.merge(train2017, language, how = 'left', on = 'parcelid')
 # print('Tax Features 2017  ...')
 # train2017.iloc[:, train2017.columns.str.startswith('tax')] = np.nan
 
-# print('Concat Train 2016 & 2017 ...')
+print('Concat Train 2016 & 2017 ...')
 train_df = pd.concat([train2016, train2017], axis = 0)
 # test_df = pd.merge(sample_submission[['ParcelId']], properties2016.rename(columns = {'parcelid': 'ParcelId'}), how = 'left', on = 'ParcelId')
 
