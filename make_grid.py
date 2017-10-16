@@ -33,12 +33,12 @@ num_of_sub_regions_in_region_square = 2  # for both width and height
 lat_lon_adjustment = float(10**6)
 
 
-def calc_row_col_number(row, lat_long= 'latitude'):
-    if lat_long == 'latitude':
-        row = int( (row.latitude - bound['lat'][0])/(bound['lat'][1] - bound['lat'][0]) * grid_size)
-    else:
-        col = int( (row.longitude - bound['lon'][0])/(bound['lon'][1] - bound['lon'][0]) * grid_size)
-    return row, col
+def calc_row_number(latitude):
+    return   int( (latitude - bound['lat'][0])/(bound['lat'][1] - bound['lat'][0]) * grid_size)
+
+def calc_col_number(longitude):
+    return int( (longitude - bound['lon'][0])/(bound['lon'][1] - bound['lon'][0]) * grid_size)
+
 
 
 
@@ -105,11 +105,11 @@ msgs_features_df['col']=0
 
 
 print ('calculating rows and cols')
-latitude_func = partial(calc_row_col_number(), lat_long = 'latitude')
-msgs_features_df['row'] = msgs_features_df.apply(latitude_func, axis=1)
+# latitude_func = partial(calc_row_col_number(), lat_long = 'latitude')
+msgs_features_df['row'] = msgs_features_df.latitude.map(calc_row_number)
 
-longitude_func = partial(calc_row_col_number(), lat_long = 'longitude')
-msgs_features_df['col'] = msgs_features_df.apply(longitude_func, axis=1)
+# longitude_func = partial(calc_row_col_number(), lat_long = 'longitude')
+msgs_features_df['col'] = msgs_features_df.longitude.map(calc_col_number)
 
 print ('grouping on row and col')
 msgs_features_df = msgs_features_df.groupby(['row', 'col']).sum()
