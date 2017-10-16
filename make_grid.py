@@ -137,6 +137,7 @@ msgs_features_df['one'] = 1
 
 
 print ('grouping on row and col')
+msgs_features_df['row_col'] = str(msgs_features_df['row'])+ '_' + str(msgs_features_df['col'])
 mf_df = msgs_features_df.groupby(['row', 'col']).sum()
 mf_df = mf_df.div(mf_df.one, axis='index')
 
@@ -148,7 +149,7 @@ print ('msgs_features_df: ', mf_df)
 print (mf_df)
 
 
-msgs_features_df['row_col'] = str(msgs_features_df['row'])+ '_' + str(msgs_features_df['col'])
+# msgs_features_df['row_col'] = str(msgs_features_df['row'])+ '_' + str(msgs_features_df['col'])
 # rows = mf_df['row'].values
 # cols = mf_df['row'].values
 #
