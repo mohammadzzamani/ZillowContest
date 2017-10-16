@@ -109,7 +109,7 @@ def evaluate(Ytrue, Ypred, type='regression',  pre = 'pre ', trnsfrm = None):
     return [mae , mse]
 
 
-def cats_to_int(data):
+def cats_to_int_1param(data):
         print ('cats_to_int...')
         cat_columns = data.select_dtypes(['category','object']).columns
         print ('cat_columns: ' , cat_columns)

@@ -248,7 +248,7 @@ train_df.fillna(-999, inplace=True)
 
 
 # train_df = outlier_detection(train_df, thresh = 1)
-train_df = cats_to_int(train_df)
+train_df = cats_to_int_1param(train_df)
 train_features = train_features + ['logerror']
 print ' ... ' , len(train_features)
 nolanguage_features = [ f for f in train_features if not f in language_features ]
