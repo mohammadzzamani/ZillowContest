@@ -54,6 +54,7 @@ def connectToDB():
 
 
 def retrieve():
+    print ('retrieve ...')
     try:
         cursor = connectToDB()
     except:
@@ -90,23 +91,27 @@ def retrieve():
         return houses_df, msgs_df, features_df, distinct_features
 
 
+
 houses_df, msgs_df, features_df, distinct_features = retrieve()
 
+print ('merging msgs and features')
 msgs_features_df = pd.merge(msgs_df, features_df, how='left', on='message_id')
 
 msgs_features_df['row']=0
 msgs_features_df['col']=0
 
-for index, msg in msgs_features_df:
-    msgs_features_df.set_value(index,)
+# for index, msg in msgs_features_df:
+#     msgs_features_df.set_value(index,)
 
 
+print ('calculating rows and cols')
 latitude_func = partial(calc_row_col_number(), lat_long = 'latitude')
 msgs_features_df['row'] = msgs_features_df.apply(latitude_func, axis=1)
 
 longitude_func = partial(calc_row_col_number(), lat_long = 'longitude')
 msgs_features_df['col'] = msgs_features_df.apply(longitude_func, axis=1)
 
+print ('grouping on row and col')
 msgs_features_df = msgs_features_df.groupby(['row', 'col']).sum()
 
 print ('msgs_features_df.shape: ', msgs_features_df.shape)
