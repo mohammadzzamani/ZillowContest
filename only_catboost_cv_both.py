@@ -151,6 +151,8 @@ region_df = pd.merge(region_feat, region_featcount, how = 'left', on = 'rid')
 
 print ('region_df: ', region_df.shape, ' , ', region_df.columns)
 
+print ('house_region: ', house_region.shape, ' , ',  len(list(set(house_region.hid.values))), ' , \n', house_region.columns)
+
 language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
 print ('language: ', language.shape, ' , ',  len(list(set(language.hid.values))), ' , \n', language.columns)
 
