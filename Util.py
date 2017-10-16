@@ -174,9 +174,13 @@ def get_submission_format(data):
     return submission_df
 
 def prepare_final_submission(submission_df, Ypred, type= 0):
+    print ('prepare_final_submission ...')
+    print ('submission_df.columns: ' , submission_df.columns)
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)
     submission_df['logerror'] = Ypred
     submission_df = submission_df[['logerror']]
+
+    print ('submission_df.columns: ' , submission_df.columns)
 
     # if ('Date' in submission_df.columns):
     if type == 0:

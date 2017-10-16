@@ -111,7 +111,7 @@ train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transacti
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
 
 print('Loading Language ...')
-house_region = pd.read_csv('zillow_data/hid_rid.csv', low_memory = False)
+house_region = pd.read_csv('zillow_data/hid_rid_small.csv', low_memory = False)
 region_feat = pd.read_csv('zillow_data/rid_feat.csv', low_memory = False)
 region_featcount = pd.read_csv('zillow_data/rid_feat_count.csv', low_memory = False)
 
