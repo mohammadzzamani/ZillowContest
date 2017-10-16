@@ -126,6 +126,8 @@ def cats_to_int(data1, data2):
         print ('cat_columns: ' , cat_columns)
 
         for col in cat_columns:
+            if col == 'propertyzoningdesc':
+                continue
             print ('col:  ' , col)
             l1 = list(set(data1[col].values))
             l2 = list(set(data2[col].values))

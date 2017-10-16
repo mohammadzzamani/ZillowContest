@@ -98,8 +98,9 @@ def cross_validation(all_df, train_feats= [], nolang_feats = [], folds = 2):
 
     for name, train_feats in train_features.items():
         print YpredsAll[name].shape
+
         for ypred in YpredsAll[name]:
-            evaluate(Ytest, ypred)
+            evaluate(Ytest, ypred, pre=name+' : ')
 
 
 
