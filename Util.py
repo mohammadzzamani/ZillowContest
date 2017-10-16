@@ -131,13 +131,21 @@ def add_date_features(df, drop_transactiondate=True):
     return df
 
 def get_submission_format(data):
+    print ('get_submission_format ...')
+    data = data[['parcelid']]
+    print (data)
     cols = ['ParcelId', '10/1/16', '11/1/16', '12/1/16', '10/1/17', '11/1/17', '12/1/17']
     for i in range(1 ,len(cols)):
         c = cols[i]
         data[c] = 0
     data.columns = cols
     print (data.columns)
+    print (data.shape)
     submission_df = pd.melt(data, id_vars=["parcelid"],var_name="transactiondate", value_name="logerror")
+    print ('submission_df: ')
+    print (submission_df)
+    print (submission_df.shape)
+    return submission_df
 
 def prepare_final_submission(submission_df, Ypred, type= 0):
     ##### prepare submission dataframe to look like the actual submission file (using pivot_table)

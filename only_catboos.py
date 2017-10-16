@@ -106,7 +106,7 @@ Ytrain = train_df.logerror
 print(Xtrain.shape, Ytrain.shape)
 
 
-submission_df = get_submission_format(test_df[['ParcelId']])
+submission_df = get_submission_format(test_df)
 print ('-------- shapes : ' , submission_df.shape , ' , ', test_df.shape)
 test_df = pd.merge(test_df, submission_df, how='left', on='ParcelId')
 
