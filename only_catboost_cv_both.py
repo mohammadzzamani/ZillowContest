@@ -108,6 +108,8 @@ print('Loading Properties ...')
 properties2016 = pd.read_csv('zillow_data/properties_2016.csv', low_memory = False)
 properties2017 = pd.read_csv('zillow_data/properties_2017.csv', low_memory = False)
 
+print ('----- peropertiesshapes: ', properties2016.shape, ' , ', properties2017.shape)
+
 print('Loading Train ...')
 train2016 = pd.read_csv('zillow_data/train_2016_v2.csv', parse_dates=['transactiondate'], low_memory=False)
 train2017 = pd.read_csv('zillow_data/train_2017.csv', parse_dates=['transactiondate'], low_memory=False)
@@ -117,13 +119,18 @@ house_region = pd.read_csv('zillow_data/hid_rid.csv', low_memory = False)
 region_feat = pd.read_csv('zillow_data/rid_feat.csv', low_memory = False)
 region_featcount = pd.read_csv('zillow_data/rid_feat_count.csv', low_memory = False)
 
+
+print ('merging language ...')
+region_df = pd.merge(region_feat, region_featcount, how = 'left', on = 'rid')
 language = pd.merge(house_region, region_feat, how = 'left', on = 'rid')
-language = pd.merge(language, region_featcount, how = 'left', on = 'rid')
+
 language = language.rename(columns = {'hid': 'parcelid'})
 
 # print ('sampling train data')
 # train2016 = train2016.sample(frac=0.01)
 # train2017 = train2017.sample(frac=0.01)
+
+sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
 
 print ('adding date features')
 train2016 = add_date_features(train2016)
@@ -136,6 +143,7 @@ language_features = language.columns
 print('Loading Sample ...')
 sample_submission = pd.read_csv('zillow_data/sample_submission.csv', low_memory = False)
 
+print ('----- peropertiesshapes: ', properties2016.shape, ' , ', properties2017.shape)
 print('Merge Train with Properties ...')
 train2016 = pd.merge(train2016, properties2016, how = 'left', on = 'parcelid')
 train2017 = pd.merge(train2017, properties2017, how = 'left', on = 'parcelid')
