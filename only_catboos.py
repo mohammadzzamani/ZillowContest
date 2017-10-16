@@ -130,16 +130,16 @@ print(Xtest.shape)
 
 ESTIMATORS = [
             # mean_est(),
-            CatBoostRegressor(iterations=65, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.85),
-            GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.02),
-            CatBoostRegressor(iterations=65, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
-            GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=1, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.02),
-            CatBoostRegressor(iterations=60, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
-            GradientBoostingRegressor(n_estimators= 25, loss='lad', random_state=2, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
-            CatBoostRegressor(iterations=60, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8, rsm=0.85),
-            GradientBoostingRegressor(n_estimators= 20, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.03),
-            CatBoostRegressor(iterations=55, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.9),
-            GradientBoostingRegressor(n_estimators= 30, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03)
+            CatBoostRegressor(iterations=650, learning_rate=0.02, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=5, rsm=0.85),
+            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=0, subsample=0.85, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.02),
+            CatBoostRegressor(iterations=650, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=6, rsm=0.9),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=1, subsample=0.85, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.02),
+            CatBoostRegressor(iterations=600, learning_rate=0.03, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=7, rsm=0.9),
+            GradientBoostingRegressor(n_estimators= 250, loss='lad', random_state=2, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.03, learning_rate=0.03),
+            CatBoostRegressor(iterations=600, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=8, rsm=0.85),
+            GradientBoostingRegressor(n_estimators= 200, loss='lad', random_state=3, subsample=0.75, max_depth=6, max_features=0.8,  min_impurity_decrease=0.04, learning_rate=0.03),
+            CatBoostRegressor(iterations=550, learning_rate=0.025, depth=6, l2_leaf_reg=3,loss_function='MAE',eval_metric='MAE',random_seed=9, rsm=0.9),
+            GradientBoostingRegressor(n_estimators= 300, loss='lad', random_state=4, subsample=0.8, max_depth=6, max_features=0.75,  min_impurity_decrease=0.04, learning_rate=0.03)
     ]
 
 
@@ -157,7 +157,12 @@ for cntr in range(len(ESTIMATORS)):
     print ('predicting ...', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
     Ypred = estimator.predict(Xtest)
 
+
     Ypreds = stack_folds_preds(Ypred, Ypreds, 0)
+    print ('Ypred: ' , Ypred)
+    print ('Ypreds.shape: ', Ypreds.shape)
+    print ('Ypreds: ' , Ypreds)
+
 
 if len(ESTIMATORS)>1:
     ypred_mean  = np.mean(Ypred, axis=0)
